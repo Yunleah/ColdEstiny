@@ -18,9 +18,9 @@ object ConfigModule {
         console().sendLang("plugin-loadModule", KEY, configFileList.size, "配置组")
     }
 
-    fun worldConfigModule(event: PlayerDeathEvent): Boolean {
+    fun worldConfigModule(event: PlayerDeathEvent): List<File>? {
         val trueFileList = ToolsUtil.getTrueFileList(ConfigFileList as ArrayList<File>,"Config.yml")
-        debug("§l--------Config.yml--------")
+        debug("§l-----------------------WorldConfig.yml-----------------------")
         debug("获取的所有Config.yml文件 -> $trueFileList")
         val fileKeyEnable = getFileKey(trueFileList as ArrayList<File>, "Options.Enable")
         debug("获取的所有[Config.yml | 启用]列表 -> $fileKeyEnable")
@@ -36,6 +36,26 @@ object ConfigModule {
         debug("传入的玩家死亡世界 -> $deathWorld")
         val cFileList = fileKeyWorldList.filter { it.second == deathWorld.name }.map { it.first }
         debug("通过世界判断确定的Config.yml -> $cFileList")
-        return true
+        debug("§l-----------------------WorldConfig.yml-----------------------")
+        return when (cFileList.isEmpty()) {
+            true -> { debug("当前世界暂未被本插件托管! -> $deathWorld"); null }
+            false -> { cFileList as ArrayList<File> }
+        }
+    }
+
+    fun permConfigModule(fileList: ArrayList<File>, event:PlayerDeathEvent): ArrayList<File>? {
+        debug("§l-----------------------PermConfig.yml-----------------------")
+        debug("获取的筛选后Config.yml文件 -> $fileList")
+        val permFileList = getFileKey(fileList, "Options.Perm.Enable")
+        debug("获取的所有[Config.yml | Perm启用]列表 -> $permFileList")
+        val fileTruePermList = permFileList.filter { it.second.toBoolean() }.map { it.first }
+        debug("获取的所有Perm启用的Config.yml列表 -> $fileTruePermList")
+        val fileKeyPermList = getFileKey(fileTruePermList as ArrayList<File>, "Options.Perm.Info").filter { event.entity.player!!.hasPermission(it.second) }.map { it.first }
+        debug("通过世界+权限判断确定的Config.yml -> $fileKeyPermList")
+        debug("§l-----------------------WorldConfig.yml-----------------------")
+        return when (fileKeyPermList.isEmpty()) {
+            true -> { debug("当前玩家不具有任何权限使得本插件托管!"); null }
+            false -> { fileKeyPermList as ArrayList<File> }
+        }
     }
 }

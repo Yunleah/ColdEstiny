@@ -1,20 +1,29 @@
 package me.yunleah.plugin.coldestiny.internal.handle
 
+import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
-import me.yunleah.plugin.coldestiny.util.ToolsUtil
+import me.yunleah.plugin.coldestiny.util.FileUtil
+import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
+import taboolib.module.lang.sendError
+import java.io.File
+import java.time.LocalDateTime
 
 object PluginHandle {
     fun preHandle(event: PlayerDeathEvent) {
-        val playerInWorld = event.entity.world
-        if (!ConfigModule.worldConfigModule(event)) {
-            return ToolsUtil.debug("玩家所在世界未被本插件托管 -> ${playerInWorld.name}")
+        val redeemFile = FileUtil.getFileOrCreate("data${File.separator}${event.entity.player!!.uniqueId}${LocalDateTime.now()}.yml")
+        val worldConfig = ConfigModule.worldConfigModule(event)
+        val permConfig = ConfigModule.permConfigModule(worldConfig as ArrayList<File>, event)
+        if (permConfig!!.size != 1) {
+            return console().sendError("plugin-format","有不止一个配置组符合玩家 -> ${event.entity.player!!.name} | 配置组 -> $permConfig")
         }
-        mainHandle()
+        val preConfigFile = permConfig[0].toString()
+        mainHandle(preConfigFile, redeemFile)
     }
 
-    private fun mainHandle() {
+    private fun mainHandle(file: String, redeem: File) {
+
         postHandle()
     }
 
