@@ -9,6 +9,7 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
+import taboolib.common.platform.function.submit
 import taboolib.module.lang.sendLang
 import java.io.File
 

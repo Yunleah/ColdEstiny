@@ -17,7 +17,7 @@ Options:
   Drop:
     #是否启用
     Enable: false
-    #绑定掉落组[Key:掉落组,NULL:全部掉落,ALL:全不掉落]
+    #绑定掉落组
     Bind: Example
   #配置脚本动作
   Action:
