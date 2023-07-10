@@ -25,6 +25,7 @@ object ConfigModule {
         val fileKeyEnable = getFileKey(trueFileList as ArrayList<File>, "Options.Enable")
         debug("获取的所有[Config.yml | 启用]列表 -> $fileKeyEnable")
         val fileTrueList = fileKeyEnable.filter { it.second.toBoolean() }.map { it.first }
+        val fileFalseList = fileKeyEnable.filter { !it.second.toBoolean() }.map {it.first}
         debug("获取的所有启用的Config.yml列表 -> $fileTrueList")
         val fileKeyWorld = getFileKey(fileTrueList as ArrayList<File>, "Options.World.Enable")
         debug("获取的所有[Config.yml | World启用]列表 -> $fileKeyWorld")
@@ -35,11 +36,12 @@ object ConfigModule {
         val deathWorld = event.entity.world
         debug("传入的玩家死亡世界 -> $deathWorld")
         val cFileList = fileKeyWorldList.filter { it.second == deathWorld.name }.map { it.first }
-        debug("通过世界判断确定的Config.yml -> $cFileList")
+        val wFile = cFileList + fileFalseList
+        debug("通过世界判断确定的Config.yml -> $wFile")
         debug("§l-----------------------WorldConfig.yml-----------------------")
-        return when (cFileList.isEmpty()) {
+        return when (wFile.isEmpty()) {
             true -> { debug("当前世界暂未被本插件托管! -> $deathWorld"); null }
-            false -> { cFileList as ArrayList<File> }
+            false -> { wFile as ArrayList<File> }
         }
     }
 
@@ -49,13 +51,15 @@ object ConfigModule {
         val permFileList = getFileKey(fileList, "Options.Perm.Enable")
         debug("获取的所有[Config.yml | Perm启用]列表 -> $permFileList")
         val fileTruePermList = permFileList.filter { it.second.toBoolean() }.map { it.first }
+        val fileFalsePermList = permFileList.filter { !it.second.toBoolean() }.map { it.first }
         debug("获取的所有Perm启用的Config.yml列表 -> $fileTruePermList")
         val fileKeyPermList = getFileKey(fileTruePermList as ArrayList<File>, "Options.Perm.Info").filter { event.entity.player!!.hasPermission(it.second) }.map { it.first }
-        debug("通过世界+权限判断确定的Config.yml -> $fileKeyPermList")
+        val pFile = fileKeyPermList + fileFalsePermList
+        debug("通过世界+权限判断确定的Config.yml -> $pFile")
         debug("§l-----------------------WorldConfig.yml-----------------------")
-        return when (fileKeyPermList.isEmpty()) {
+        return when (pFile.isEmpty()) {
             true -> { debug("当前玩家不具有任何权限使得本插件托管!"); null }
-            false -> { fileKeyPermList as ArrayList<File> }
+            false -> { pFile as ArrayList<File> }
         }
     }
 }
