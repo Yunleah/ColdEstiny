@@ -25,10 +25,10 @@ object Command {
     val world = subCommand {
         execute<CommandSender> { sender, _, _ ->
             val worldList = plugin.server.worlds
-            sender.sendLang("plugin-format", KEY, "${worldList.forEach { world -> world.name }}")
+            sender.sendLang("plugin-format", KEY, "${worldList.map { it.name }}")
             sender.sendLang("plugin-format", KEY, "当前Server共有 ${worldList.size} 个世界")
         }
     }
     @CommandBody
-    val reload = Reload
+    val reload = Reload.reload
 }
