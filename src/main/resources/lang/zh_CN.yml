@@ -1,0 +1,7 @@
+plugin-load: '&7[ {0} &7] {0} &6加载成功！'
+plugin-enable: '&7[ {0} &7] {0} &6启用成功！'
+plugin-disable: '&7[ {0} &7] {0} &6关闭成功！'
+plugin-debug: '&f{0}'
+plugin-format: '&7[ {0} &7] &f{1}'
+
+command-reload: '&7[ &b{0} &7] &b{0} &6重载成功！'

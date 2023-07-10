@@ -6,7 +6,14 @@ plugins {
 
 taboolib {
     install("common")
+    install("common-5")
+    install("module-chat")
+    install("module-configuration")
+    install("module-kether")
+    install("module-lang")
+    install("module-metrics")
     install("platform-bukkit")
+    install("expansion-command-helper")
     classifier = null
     version = "6.0.11-13"
 
@@ -14,6 +21,7 @@ taboolib {
         contributors {
             name("Yunleah")
         }
+
     }
 }
 
@@ -22,8 +30,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("ink.ptms.core:v11701:11701:mapped")
-    compileOnly("ink.ptms.core:v11701:11701:universal")
+    compileOnly("ink.ptms:nms-all:1.0.0")
+    compileOnly("ink.ptms.core:v11902:11902-minimize:mapped")
+    compileOnly("ink.ptms.core:v11902:11902-minimize:universal")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
