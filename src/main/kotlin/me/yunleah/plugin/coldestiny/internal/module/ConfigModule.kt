@@ -25,13 +25,16 @@ object ConfigModule {
         debug("获取的所有Config.yml文件 -> $trueFileList")
         val fileKeyEnable = getFileKey(trueFileList as ArrayList<File>, "Options.Enable")
         debug("获取的所有[Config.yml | 启用]列表 -> $fileKeyEnable")
+
+
+
         val fileTrueList = fileKeyEnable.filter { it.second.toBoolean() }.map { it.first }
-        val fileFalseList = fileKeyEnable.filter { !it.second.toBoolean() }.map {it.first}
-        debug("获取的所有启用的Config.yml列表 -> $fileTrueList")
         val fileKeyWorld = getFileKey(fileTrueList as ArrayList<File>, "Options.World.Enable")
         debug("获取的所有[Config.yml | World启用]列表 -> $fileKeyWorld")
         val fileTrueWorldList = fileKeyWorld.filter { it.second.toBoolean() }.map { it.first }
+        val fileFalseList = fileKeyWorld.filter { !it.second.toBoolean() }.map { it.first }
         debug("获取的所有World启用的Config.yml列表 -> $fileTrueWorldList")
+        debug("获取的所有World未启用的Config.yml列表 -> $fileFalseList")
         val fileKeyWorldList = getFileKey(fileTrueWorldList as ArrayList<File>, "Options.World.Info")
         debug("获取的所有World Config列表 -> $fileKeyWorldList")
         val deathWorld = event.entity.world

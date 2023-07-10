@@ -4,13 +4,13 @@ Options:
   #配置限定世界
   World:
     #是否启用
-    Enable: false
+    Enable: true
     #世界名
     Info: "world"
   #配置限定权限
   Perm:
     #是否启用
-    Enable: false
+    Enable: true
     #权限
     Info: "ce.perm.example"
   #配置掉落组
@@ -43,13 +43,13 @@ Options:
     AutoRespawn:
       #是否启用
       Enable: true
-      #延迟时间
+      #延迟时间[单位s]
       Time: 1s
     #配置重生点
     Spawn:
-      #重生地点类型[death:死亡点,coo：坐标]
+      #重生地点类型[death:死亡点,coo：坐标, loc: 重生点]
       Type: death
-      Info: 100 100 100 => world
+      Info: 100 100 100 world
   #配置物品赎回
   ItemRedemption:
     #是否启用

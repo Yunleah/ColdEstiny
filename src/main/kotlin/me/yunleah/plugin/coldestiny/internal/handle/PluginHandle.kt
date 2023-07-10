@@ -6,6 +6,9 @@ import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
+import me.yunleah.plugin.coldestiny.internal.module.DropModule.verify
+import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
+import me.yunleah.plugin.coldestiny.util.DropUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
@@ -22,7 +25,7 @@ object PluginHandle {
     fun preHandle(event: PlayerDeathEvent) {
         debug("<->preHandle开始运行...")
         val redeemFile = FileUtil.getFileOrCreate("data${File.separator}${event.entity.player!!.uniqueId}${File.separator}${LocalDateTime.now()}.yml")
-        val worldConfig = ConfigModule.worldConfigModule(event)
+        val worldConfig = ConfigModule.worldConfigModule(event) ?: return debug("玩家暂未被托管")
         val permConfig = ConfigModule.permConfigModule(worldConfig as ArrayList<File>, event)
         if (permConfig == null) {
             return debug("玩家暂未被托管")
@@ -31,26 +34,21 @@ object PluginHandle {
         }
         val configPath = permConfig.first().toString()
         val dropPath = DropModule.dropFileModule(configPath, DropFileList as ArrayList<File>)?.first()
-        mainHandle(redeemFile, permConfig, dropPath)
+        mainHandle(redeemFile, permConfig, dropPath, event)
     }
 
-    private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File?) {
+    private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File?, event: PlayerDeathEvent) {
         debug("<->mainHandle开始运行...")
         debug("redeem -> $redeem")
         debug("config -> $config")
         debug("drop -> $drop")
-        val dropInfo = drop?.let { getKey(it, "Options.Drop.Info") }
-        var dropSetting: IntArray? = null
-        submit {
-            dropSetting = dropInfo?.let { DropModule.getSetting(it) }
-        }
-        postHandle(dropSetting,drop)
+
+        //TODO 处理掉落
+
+        //TODO 判断Kether-Action返回值 false停下，true继续
     }
 
-    private fun postHandle(setting: IntArray?, drop:File?) {
-        if (setting == null) {
-            return console().sendError("配置文件存在错误：同时存在ALL和NULL -> ${drop?.name}")
+    private fun postHandle(event: PlayerDeathEvent,exp: Int, pack: IntArray, config: File) {
 
-        }
     }
 }

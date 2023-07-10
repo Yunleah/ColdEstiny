@@ -10,11 +10,10 @@ import java.io.File
 object FileManager {
     @Awake(LifeCycle.LOAD)
     fun createFile() {
-        submit(async = true) {
-            ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}drop${File.separator}ExampleDrop.yml", false)
-            ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}redeem${File.separator}ExampleRedeem.yml", false)
-            ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}ExampleConfig.yml", false)
-        }
+        ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}drop${File.separator}ExampleDrop.yml", false)
+        ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}redeem${File.separator}ExampleRedeem.yml", false)
+        ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}ExampleConfig.yml", false)
+
     }
 
 }
