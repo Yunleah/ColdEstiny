@@ -1,0 +1,15 @@
+Options:
+  #赎回组Kay
+  Key: Example
+  #权限配置
+  Perm:
+    #是否启用
+    Enable: false
+    #权限
+    Info: "ce.redeem.example"
+  #时间限制
+  RedeemTime:
+    #是否启用
+    Enable: false
+    #时间
+    Time: 1day
