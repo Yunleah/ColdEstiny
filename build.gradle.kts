@@ -1,14 +1,20 @@
 plugins {
     java
-    id("io.izzel.taboolib") version "1.42"
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    id("io.izzel.taboolib") version "1.56"
+    id("org.jetbrains.kotlin.jvm") version "1.7.20"
 }
 
 taboolib {
     install("common")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-114"
+    version = "6.0.11-13"
+
+    description {
+        contributors {
+            name("Yunleah")
+        }
+    }
 }
 
 repositories {
