@@ -53,13 +53,17 @@ object DropModule {
 
     private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): Unit? {
         ToolsUtil.debug("玩家${event.entity.player!!.name}Inv物品列表 -> $slotPair")
-        val dropPackInfo = getKey(drop, "Options.Drop.Pack.Info")!!.map { it.toString() } as ArrayList<String>
-        val dropExpInfo = getKey(drop, "Options.Drop.Exp.Info")!!.map { it.toString() } as ArrayList<String>
+        val dropPackInfo = getKey(drop, "Options.Drop.Pack.Info")
+        val packType = getKey(drop, "Options.Drop.Pack.Type")
+        val packProtected = getKey(drop, "Options.Drop.Pack.protected")
+        val expType = getKey(drop, "Options.Drop.Exp.Type")
+        val dropExpInfo = getKey(drop, "Options.Drop.Exp.Info")
         val loreItemInfo = getKey(drop, "Options.Lore").toString()
-        val infoPackInt = MathUtil.getMath(dropPackInfo, slotPair)
-            ?: return null
-
-
+        val infoPack = packProtected?.let { MathUtil.getPackMath(dropPackInfo!!, slotPair, packType!!, it) }
+        val infoExp = MathUtil.getExpMath(dropExpInfo!!, expType!!)
+        ToolsUtil.debug("infoPack -> $infoPack")
+        ToolsUtil.debug("infoExp -> $infoExp")
+        ToolsUtil.debug("loreItemInfo -> $loreItemInfo")
         return null
     }
 }

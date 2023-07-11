@@ -1,67 +1,73 @@
 package me.yunleah.plugin.coldestiny.util
 
+import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.PlayerInventory
-import taboolib.common.platform.function.console
-import taboolib.common.util.asList
+import taboolib.common.util.random
 import taboolib.common5.cint
-import taboolib.module.configuration.util.asMap
 import taboolib.module.kether.isInt
-import taboolib.module.lang.sendError
-import java.io.Serializable
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
 
-object MathUtil {
-    fun getMath(text: ArrayList<String>, slot: MutableList<Pair<Int, ItemStack>>): MutableList<Pair<Int, ItemStack>>? {
-        val result = mutableListOf<Pair<Int, ItemStack>>()
-        val percentList = text.filter { it.endsWith("%") }
-        val protectedList = text.filter { it.startsWith("</>") && it.endsWith("</>") }
-        val allList = text.filter { it == "ALL" }
-        val nullList = text.filter { it == "NULL" }
-        val rangeList = text.filter { it.startsWith("<~>") && it.endsWith("<~>") }
-        val numberList = text.filter { it.startsWith("<=>") && it.endsWith("<=>") }
-        val orderList = text.filter { it.startsWith("<->") && it.endsWith("<->") }
 
-        when {
-            allList.isNotEmpty() && nullList.isNotEmpty() -> {
-                console().sendError("配置出现错误！ -> $text | 同时包含ALL&NULL！")
-                return null
+object MathUtil {
+    fun getPackMath(text: String, slot: MutableList<Pair<Int, ItemStack>>, type: String, protected: String): MutableList<Pair<Int, ItemStack>>? {
+        val protectedList = protected.split(",").map { it.trim().toInt() }.toIntArray()
+        slot.shuffle()
+        when (type) {
+            //百分比
+            "per" -> {
+                debug("DropPackType -> $type")
+                if (!text.endsWith("%")) { return null }
+                if (!text.removePrefix("%").isInt()) { return null }
+                debug("Info合法 -> $text...")
+                val per = text.removePrefix("%").toInt() / 100
+                debug("换算后per -> $per")
+                val slotSize = slot.size
+                debug("玩家背包物品格数量 -> $slotSize")
+                val slotOrder = (slotSize * per)
+                debug("物品格掉落数量 -> $slotOrder")
+                val result = slot.filterIndexed { index, _ -> index < slotOrder }.toMutableList()
+                result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
+                return result
             }
-            allList.isNotEmpty() -> {
-                result.addAll(slot)
+            //个数
+            "order" -> {
+                debug("DropPackType -> $type")
+                if (!text.isInt()) { return null }
+                debug("Info合法 -> $text...")
+                val order = text.toInt()
+                debug("指定数量 -> $order")
+                val result = slot.filterIndexed { index, _ -> index < order }.toMutableList()
+                result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
+                return result
             }
-            nullList.isNotEmpty() -> {
-                return null
+            //范围
+            "range" -> {
+                debug("DropPackType -> $type")
+                if (!text.split("~").first().isInt() && text.split("~").last().isInt()) { return null }
+                debug("Info合法 -> $text...")
+                val rangePre = text.split("~").first().toInt()
+                debug("PreInt -> $rangePre")
+                val rangePost = text.split("~").first().toInt()
+                debug("Post -> $rangePost")
+                val range = ThreadLocalRandom.current().nextInt(rangePre, rangePost)
+                val result = slot.filterIndexed { index, _ -> index < range }.toMutableList()
+                result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
+                return result
             }
-            rangeList.isNotEmpty() -> {
-                val rangeLast = rangeList.first().split("<~>").getOrNull(1)?.split(",")?.mapNotNull { it.toIntOrNull() }
-                val rand = Random.nextInt(rangeLast?.firstOrNull() ?: 0, rangeLast?.lastOrNull() ?: 0)
-                result.addAll(slot.take(rand))
-            }
-            numberList.isNotEmpty() -> {
-                val numberLast = numberList.first().split("<=>").getOrNull(1)?.split(",")?.mapNotNull { it.toIntOrNull() }
-                val number = numberLast?.firstOrNull() ?: 0
-                result.addAll(slot.take(number.coerceAtMost(slot.size)))
-            }
-            orderList.isNotEmpty() -> {
-                val orderLast = orderList.first().split("<->").getOrNull(1)?.split(",")?.mapNotNull { it.toIntOrNull() }
-                result.addAll(slot.filter { pair -> !orderLast.isNullOrEmpty() && !orderLast.contains(pair.first) })
-                val remainingSlots = slot.filter { pair -> orderLast.isNullOrEmpty() || orderLast.contains(pair.first) }
-                val orderedSlots = mutableListOf<Pair<Int, ItemStack>>()
-                orderLast?.forEach { index ->
-                    remainingSlots.find { it.first == index }?.let { orderedSlots.add(it) }
-                }
-                result.addAll(orderedSlots)
-            }
-            percentList.isNotEmpty() -> {
-                val percent = percentList.first().removeSuffix("%").toInt()
-                val size = slot.size * (percent / 100f)
-                result.addAll(slot.take(size.toInt()))
+            //指定物品格
+            "ap" -> {
+                debug("DropPackType -> $type")
+                val apList = protected.split(",").map { it.trim().toInt() }.toIntArray()
+                val result = slot.filter { it.first in apList }.toMutableList()
+                result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
+                return  result
             }
         }
+        return null
+    }
 
-        val protectedSlots = protectedList.firstOrNull()?.split("</>")?.getOrNull(1)?.split(",")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
-        result.removeAll { pair -> protectedSlots.contains(pair.first) }
-        return result
+    fun getExpMath(text: String, type: String) {
+
     }
 }
