@@ -4,6 +4,7 @@ import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.util.MathUtil
+import me.yunleah.plugin.coldestiny.util.NBTUtil.hasInfoTag
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import net.minecraft.world.item.Items
@@ -15,6 +16,9 @@ import taboolib.common5.cint
 import taboolib.module.kether.inferType
 import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
+import taboolib.module.nms.clone
+import taboolib.module.nms.getItemTag
+import taboolib.module.nms.setItemTag
 import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
 import java.io.File
@@ -40,7 +44,7 @@ object DropModule {
         }
     }
 
-    fun preDropModule(event: PlayerDeathEvent, drop: File) {
+    fun preDropModule(event: PlayerDeathEvent, drop: File): MutableList<Int> {
 
         val itemSlotPair = mutableListOf<Pair<Int, ItemStack>>()
         for (i in 0 until event.entity.inventory.size) {
@@ -49,10 +53,10 @@ object DropModule {
                 itemSlotPair.add(i to itemStack)
             }
         }
-        mainDropModule(event, itemSlotPair, drop)
+        return mainDropModule(event, itemSlotPair, drop)
     }
 
-    private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): Unit? {
+    private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): MutableList<Int> {
         debug("玩家${event.entity.player!!.name}Inv物品列表 -> $slotPair")
         val dropPackInfo = getKey(drop, "Options.Drop.Pack.Info")
         debug("dropPackInfo -> $dropPackInfo")
@@ -64,15 +68,41 @@ object DropModule {
         debug("expType -> $expType")
         val dropExpInfo = getKey(drop, "Options.Drop.Exp.Info")
         debug("dropExpInfo -> $dropExpInfo")
-        val loreItemInfo = getKey(drop, "Options.Lore").toString()
-        debug("loreItemInfo -> $loreItemInfo")
+        val itemEnable = getKey(drop, "Options.Item.Enable").toString()
+        debug("ItemEnable -> $itemEnable")
 
         val infoPack = MathUtil.getPackMath(dropPackInfo!!, slotPair, packType!!, packProtected!!)
-        val infoExp = MathUtil.getExpMath(dropExpInfo!!, expType!!)
+        val infoExp = MathUtil.getExpMath(dropExpInfo!!, expType!!, event)
         debug("infoPack -> $infoPack")
         debug("infoExp -> $infoExp")
-        debug("loreItemInfo -> $loreItemInfo")
-        return null
+        debug("ItemEnable -> $itemEnable")
+        return postDropModule(infoPack, infoPack, itemEnable.toBoolean(), getKey(drop, "Options.Item.Type"), getKey(drop, "Options.Item.Info"))
+    }
+    private fun postDropModule(packDrop:  MutableList<Pair<Int, ItemStack>>?, expDrop:  MutableList<Pair<Int, ItemStack>>?, enable: Boolean, type: String?, info: String?): MutableList<Int> {
+        debug("<->postDropModule 运行...")
+        debug("infoPack -> $packDrop")
+        debug("infoExp -> $expDrop")
+        debug("ItemEnable -> $enable")
+
+        val newPackDrop = mutableListOf<Int>()
+
+        packDrop?.forEach { (id, itemStack) ->
+            val itemMeta = itemStack.itemMeta
+            if (enable && type == "lore" && itemMeta != null) {
+                val lore = itemMeta.lore?.joinToString("\n") ?: ""
+                if (lore.contains(info!!)) {
+                    newPackDrop.add(id)
+                }
+            } else if (enable && type == "nbt") {
+                if (hasInfoTag(itemStack, info!!)) {
+                    newPackDrop.add(id)
+                }
+            } else {
+                newPackDrop.add(id)
+            }
+        }
+        debug("剔除保护物品后列表 ->$newPackDrop")
+        return newPackDrop
     }
 }
 

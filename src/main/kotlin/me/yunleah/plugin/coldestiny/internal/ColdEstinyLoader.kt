@@ -2,6 +2,7 @@ package me.yunleah.plugin.coldestiny.internal
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
+import me.yunleah.plugin.coldestiny.internal.handle.ScriptHandle
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.ConfigFileList
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.RedeemFileList
@@ -37,6 +38,7 @@ object ColdEstinyLoader {
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
         RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
+        ScriptHandle.runActionKE("tell 'Kether成功加载'")
 
         ToolsUtil.debug("Debug模式已开启!")
     }

@@ -1,25 +1,22 @@
 package me.yunleah.plugin.coldestiny.util
 
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
-import taboolib.common.util.random
-import taboolib.common5.cint
-import taboolib.module.kether.isInt
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.random.Random
 
 
 object MathUtil {
-    fun getPackMath(text: String, slot: MutableList<Pair<Int, ItemStack>>, type: String, protected: String): MutableList<Pair<Int, ItemStack>>? {
+    fun getPackMath(text: String?, slot: MutableList<Pair<Int, ItemStack>>, type: String, protected: String): MutableList<Pair<Int, ItemStack>>? {
         val protectedList = protected.split(",").map { it.trim().toInt() }.toIntArray()
         slot.shuffle()
-        debug("when Type...")
+        debug("Pack when Type...")
         debug("type -> $type")
         when (type) {
             //百分比
             "per" -> {
                 debug("DropPackType -> $type")
-                if (!text.endsWith("%")) { return null }
+                if (!text!!.endsWith("%")) { return null }
                 debug("Info合法 -> $text...")
                 val per = text.removeSuffix("%").toDouble() / 100.0
                 debug("换算后per -> $per")
@@ -35,7 +32,7 @@ object MathUtil {
             "order" -> {
                 debug("DropPackType -> $type")
                 debug("Info合法 -> $text...")
-                val order = text.toInt()
+                val order = text!!.toInt()
                 debug("指定数量 -> $order")
                 val result = slot.filterIndexed { index, _ -> index <= order }.toMutableList()
                 result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
@@ -44,7 +41,7 @@ object MathUtil {
             //范围
             "range" -> {
                 debug("DropPackType -> $type")
-                if ("~" !in text) { return null }
+                if ("~" !in text!!) { return null }
                 debug("Info合法 -> $text...")
                 val rangePre = text.split("~").first().toInt()
                 debug("PreInt -> $rangePre")
@@ -58,16 +55,64 @@ object MathUtil {
             //指定物品格
             "ap" -> {
                 debug("DropPackType -> $type")
-                val apList = text.split(",").map { it.trim().toInt() }.toIntArray()
+                val apList = text!!.split(",").map { it.trim().toInt() }.toIntArray()
                 val result = slot.filter { it.first in apList }.toMutableList()
                 result.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
                 return  result
+            }
+            "ALL" -> {
+                slot.removeAll { pair: Pair<Int, ItemStack> -> protectedList.contains(pair.first) }
+                return slot
+            }
+            "NULL" -> {
+                return mutableListOf()
             }
         }
         return null
     }
 
-    fun getExpMath(text: String, type: String) {
-
+    fun getExpMath(text: String?, type: String, event:  PlayerDeathEvent): Int? {
+        debug("Exp when Type...")
+        debug("type -> $type")
+        val exp = event.entity.exp
+        debug("玩家经验条占比 -> $exp")
+        val expToLevel = event.entity.player!!.expToLevel
+        debug("玩家当前等级所需经验 -> $expToLevel")
+        val playerExp = (expToLevel * exp).toInt()
+        debug("玩家当时实际总经验 -> $playerExp")
+        when (type) {
+            "per" -> {
+                debug("DropExpType -> $type")
+                if (!text!!.endsWith("%")) { return null }
+                debug("Info合法 -> $text...")
+                val per = text.removeSuffix("%").toDouble() / 100.0
+                return (playerExp * per).toInt()
+            }
+            "order" -> {
+                debug("DropExpType -> $type")
+                debug("Info合法 -> $text...")
+                val order = text!!.toInt()
+                debug("指定数量 -> $order")
+                return if (order >= playerExp) { playerExp } else { order }
+            }
+            "range" -> {
+                debug("DropExpType -> $type")
+                if ("~" !in text!!) { return null }
+                debug("Info合法 -> $text...")
+                val rangePre = text.split("~").first().toInt()
+                debug("PreInt -> $rangePre")
+                val rangePost = text.split("~").last().toInt()
+                debug("Post -> $rangePost")
+                val range = ThreadLocalRandom.current().nextInt(rangePre, rangePost + 1)
+                return if (range >= playerExp) { playerExp } else { range }
+            }
+            "ALL" -> {
+                return playerExp
+            }
+            "NULL" -> {
+                return 0
+            }
+        }
+        return null
     }
 }

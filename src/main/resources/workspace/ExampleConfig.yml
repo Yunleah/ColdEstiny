@@ -25,16 +25,12 @@ Options:
     Pre:
       #是否启用
       Enable: true
-      #脚本类型[kether,js]
-      Type: kether
       #脚本
       Script: |-
     #在玩家重生时运行
     Post:
       #是否启用
       Enable: true
-      #脚本类型[kether,js]
-      Type: kether
       #脚本
       Script: |-
   #配置玩家重生

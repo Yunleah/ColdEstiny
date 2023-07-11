@@ -12,7 +12,11 @@ Options:
       #[Type: per, order, range]
       Type: per
       Info: 50%
-  Lore: "本物品不掉落"
+  Item:
+    #[lore,nbt]
+    Enable: false
+    Type: lore
+    Info: "本物品死亡不掉落"
 
 
 

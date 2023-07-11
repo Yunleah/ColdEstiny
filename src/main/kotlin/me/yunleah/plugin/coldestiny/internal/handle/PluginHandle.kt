@@ -12,11 +12,13 @@ import me.yunleah.plugin.coldestiny.util.DropUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
+import org.bukkit.Location
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.dev
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
+import taboolib.module.kether.KetherShell
 import taboolib.module.lang.sendError
 import java.io.File
 import java.time.LocalDateTime
@@ -43,15 +45,35 @@ object PluginHandle {
         debug("redeem -> $redeem")
         debug("config -> $config")
         debug("drop -> $drop")
-
-        DropModule.preDropModule(event,drop)
-
-        //TODO 处理掉落
-
-        //TODO 判断Kether-Action返回值 false停下，true继续
+        val dropItemList = DropModule.preDropModule(event,drop)
+        val spawn = SpawnModule.spawnModule(event, config.first())
+        postHandle(dropItemList, spawn!!, config.first())
     }
 
-    private fun postHandle(event: PlayerDeathEvent,exp: Int, pack: IntArray, config: File) {
+    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location, config: File) {
+        //TODO Kether-Action Pre
+        val preScriptEnable = getKey(config, "Options.Action.Pre.Enable").toBoolean()
+        var result = ""
+        if (preScriptEnable) {
+            val preScript = getKey(config, "Options.Action.Pre.Script")
+            result = ScriptHandle.runActionKE(preScript!!).toString()
+        }
+        if (!result.toBoolean()) {
+            return debug("Pre-Action返回值 -> False")
+        }
 
+
+
+
+
+
+
+        //TODO Kether-Action Post
+        val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
+        val postScript = getKey(config, "Options.Action.Post.Script")
+        if (postScriptEnable) {
+            ScriptHandle.runActionKE(postScript!!)
+        }
+        return debug("ColdEstiny -> Finish")
     }
 }
