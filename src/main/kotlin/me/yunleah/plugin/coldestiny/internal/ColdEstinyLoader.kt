@@ -2,17 +2,19 @@ package me.yunleah.plugin.coldestiny.internal
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
-import me.yunleah.plugin.coldestiny.internal.handle.ScriptHandle
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.ConfigFileList
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.RedeemFileList
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
 import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
+import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
+import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
+import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.console
 import taboolib.module.lang.sendLang
 import taboolib.module.metrics.Metrics
@@ -38,8 +40,9 @@ object ColdEstinyLoader {
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
         RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
-        ScriptHandle.runActionKE("tell 'Kether成功加载'")
-
+        "print 'Kether模块已加载' ".toKetherScript().runActions {
+            this.sender = adaptCommandSender(sender!!)
+        }
         ToolsUtil.debug("Debug模式已开启!")
     }
     @Awake(LifeCycle.DISABLE)

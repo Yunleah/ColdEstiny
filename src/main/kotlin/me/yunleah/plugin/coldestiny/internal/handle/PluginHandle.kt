@@ -2,6 +2,7 @@ package me.yunleah.plugin.coldestiny.internal.handle
 
 import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
+import me.yunleah.plugin.coldestiny.internal.event.event
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
@@ -11,14 +12,15 @@ import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
 import me.yunleah.plugin.coldestiny.util.DropUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
+import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
+import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
-import taboolib.common.platform.function.console
-import taboolib.common.platform.function.dev
-import taboolib.common.platform.function.info
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.*
 import taboolib.module.kether.KetherShell
+import taboolib.module.kether.printKetherErrorMessage
 import taboolib.module.lang.sendError
 import java.io.File
 import java.time.LocalDateTime
@@ -47,20 +49,31 @@ object PluginHandle {
         debug("drop -> $drop")
         val dropItemList = DropModule.preDropModule(event,drop)
         val spawn = SpawnModule.spawnModule(event, config.first())
-        postHandle(dropItemList, spawn!!, config.first())
+        postHandle(dropItemList, spawn!!, config.first(), event)
     }
 
-    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location, config: File) {
+    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location, config: File, event: PlayerDeathEvent) {
         //TODO Kether-Action Pre
         val preScriptEnable = getKey(config, "Options.Action.Pre.Enable").toBoolean()
         var result = ""
         if (preScriptEnable) {
-            val preScript = getKey(config, "Options.Action.Pre.Script")
-            result = ScriptHandle.runActionKE(preScript!!).toString()
+            try {
+                debug("Run Pre Kether...")
+                val script = getKey(config, "Options.Action.Pre.Script")
+                script!!.toKetherScript().runActions {
+                    this.sender = adaptCommandSender(sender!!)
+                }.thenAccept {
+                    result = it as String
+                    debug(" §5§l‹ ›§r §7Result: §f$it")
+                }
+            } catch (e: Exception) {
+                e.printKetherErrorMessage()
+            }
+            if (!result.toBoolean()) {
+                return debug("§5§l‹ ›§r §7Result: §f$result")
+            }
         }
-        if (!result.toBoolean()) {
-            return debug("Pre-Action返回值 -> False")
-        }
+
 
 
 
@@ -70,9 +83,18 @@ object PluginHandle {
 
         //TODO Kether-Action Post
         val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
-        val postScript = getKey(config, "Options.Action.Post.Script")
         if (postScriptEnable) {
-            ScriptHandle.runActionKE(postScript!!)
+            try {
+                debug("Run Post Kether...")
+                val script = getKey(config, "Options.Action.Post.Script")
+                script!!.toKetherScript().runActions {
+                    this.sender = adaptCommandSender(sender!!)
+                }.thenAccept {
+                    debug(" §5§l‹ ›§r §7Result: §f$it")
+                }
+            } catch (e: Exception) {
+                e.printKetherErrorMessage()
+            }
         }
         return debug("ColdEstiny -> Finish")
     }
