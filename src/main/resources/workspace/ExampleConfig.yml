@@ -28,7 +28,6 @@ Options:
       #脚本
       Script: |-
         tell 'Pre Kether 运行成功'
-        check 2 > 1
     #在玩家重生时运行
     Post:
       #是否启用

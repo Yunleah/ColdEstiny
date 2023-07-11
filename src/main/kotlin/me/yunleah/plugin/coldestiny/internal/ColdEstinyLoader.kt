@@ -40,7 +40,7 @@ object ColdEstinyLoader {
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
         RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
-        "print 'Kether模块已加载' ".toKetherScript().runActions {
+        "def main = { print 'Kether模块已加载' }".toKetherScript().runActions {
             this.sender = adaptCommandSender(sender!!)
         }
         ToolsUtil.debug("Debug模式已开启!")
