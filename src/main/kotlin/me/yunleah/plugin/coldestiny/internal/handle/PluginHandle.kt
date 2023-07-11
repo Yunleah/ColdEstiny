@@ -34,14 +34,17 @@ object PluginHandle {
         }
         val configPath = permConfig.first().toString()
         val dropPath = DropModule.dropFileModule(configPath, DropFileList as ArrayList<File>)?.first()
+            ?: return console().sendError("DropConfig -> Null")
         mainHandle(redeemFile, permConfig, dropPath, event)
     }
 
-    private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File?, event: PlayerDeathEvent) {
+    private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File, event: PlayerDeathEvent) {
         debug("<->mainHandle开始运行...")
         debug("redeem -> $redeem")
         debug("config -> $config")
         debug("drop -> $drop")
+
+        DropModule.preDropModule(event,drop)
 
         //TODO 处理掉落
 
