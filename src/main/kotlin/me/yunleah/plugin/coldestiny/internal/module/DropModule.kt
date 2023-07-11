@@ -5,6 +5,7 @@ import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.util.MathUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
+import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import net.minecraft.world.item.Items
 import org.bukkit.entity.Item
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -52,18 +53,25 @@ object DropModule {
     }
 
     private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): Unit? {
-        ToolsUtil.debug("玩家${event.entity.player!!.name}Inv物品列表 -> $slotPair")
+        debug("玩家${event.entity.player!!.name}Inv物品列表 -> $slotPair")
         val dropPackInfo = getKey(drop, "Options.Drop.Pack.Info")
+        debug("dropPackInfo -> $dropPackInfo")
         val packType = getKey(drop, "Options.Drop.Pack.Type")
-        val packProtected = getKey(drop, "Options.Drop.Pack.protected")
+        debug("packType -> $packType")
+        val packProtected = getKey(drop, "Options.Drop.Pack.Protected")
+        debug("packProtected -> $packProtected")
         val expType = getKey(drop, "Options.Drop.Exp.Type")
+        debug("expType -> $expType")
         val dropExpInfo = getKey(drop, "Options.Drop.Exp.Info")
+        debug("dropExpInfo -> $dropExpInfo")
         val loreItemInfo = getKey(drop, "Options.Lore").toString()
-        val infoPack = packProtected?.let { MathUtil.getPackMath(dropPackInfo!!, slotPair, packType!!, it) }
+        debug("loreItemInfo -> $loreItemInfo")
+
+        val infoPack = MathUtil.getPackMath(dropPackInfo!!, slotPair, packType!!, packProtected!!)
         val infoExp = MathUtil.getExpMath(dropExpInfo!!, expType!!)
-        ToolsUtil.debug("infoPack -> $infoPack")
-        ToolsUtil.debug("infoExp -> $infoExp")
-        ToolsUtil.debug("loreItemInfo -> $loreItemInfo")
+        debug("infoPack -> $infoPack")
+        debug("infoExp -> $infoExp")
+        debug("loreItemInfo -> $loreItemInfo")
         return null
     }
 }
