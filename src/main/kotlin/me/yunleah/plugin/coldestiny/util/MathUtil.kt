@@ -3,12 +3,17 @@ package me.yunleah.plugin.coldestiny.util
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.concurrent.ThreadLocalRandom
 
 
 object MathUtil {
-    fun getPackMath(text: String?, slot: MutableList<Pair<Int, ItemStack>>, type: String, protected: String): MutableList<Pair<Int, ItemStack>>? {
-        val protectedList = protected.split(",").map { it.trim().toInt() }.toIntArray()
+    fun getPackMath(text: String?, slot: MutableList<Pair<Int, ItemStack>>, type: String, protected: String?): MutableList<Pair<Int, ItemStack>>? {
+        var protectedList = intArrayOf()
+        if (protected != null) {
+            protectedList = protected.split(",").map { it.trim().toInt() }.toIntArray()
+        }
         slot.shuffle()
         debug("Pack when Type...")
         debug("type -> $type")
@@ -75,41 +80,14 @@ object MathUtil {
         debug("Exp when Type...")
         debug("type -> $type")
 
-        val playerExp = event.entity.totalExperience
-        debug("玩家当时实际总经验 -> $playerExp")
-        when (type) {
-            "per" -> {
-                debug("DropExpType -> $type")
-                if (!text!!.endsWith("%")) { return null }
-                debug("Info合法 -> $text...")
-                val per = text.removeSuffix("%").toDouble() / 100.0
-                return (playerExp * per).toInt()
-            }
-            "order" -> {
-                debug("DropExpType -> $type")
-                debug("Info合法 -> $text...")
-                val order = text!!.toInt()
-                debug("指定数量 -> $order")
-                return if (order >= playerExp) { playerExp } else { order }
-            }
-            "range" -> {
-                debug("DropExpType -> $type")
-                if ("~" !in text!!) { return null }
-                debug("Info合法 -> $text...")
-                val rangePre = text.split("~").first().toInt()
-                debug("PreInt -> $rangePre")
-                val rangePost = text.split("~").last().toInt()
-                debug("Post -> $rangePost")
-                val range = ThreadLocalRandom.current().nextInt(rangePre, rangePost + 1)
-                return if (range >= playerExp) { playerExp } else { range }
-            }
-            "ALL" -> {
-                return playerExp
-            }
-            "NULL" -> {
-                return 0
-            }
-        }
-        return null
+        debug("DropExpType -> $type")
+        if (!text!!.endsWith("%")) { return null }
+        debug("Info合法 -> $text...")
+        val per = text.removeSuffix("%").toDouble() / 100.0
+        val level = event.entity.player!!.level
+        val expLevel = BigDecimal(level.toDouble())
+        val exPenaltyChance = BigDecimal(per)
+        val exPenalty = expLevel.multiply(exPenaltyChance).setScale(0, RoundingMode.HALF_DOWN)
+        return expLevel.subtract(exPenalty).toInt()
     }
 }

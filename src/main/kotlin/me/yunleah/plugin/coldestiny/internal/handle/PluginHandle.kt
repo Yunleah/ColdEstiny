@@ -12,19 +12,19 @@ import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.*
-import taboolib.common5.clong
 import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
 import java.io.File
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 object PluginHandle {
     fun preHandle(event: PlayerDeathEvent) {
         debug("<->preHandle开始运行...")
-        val redeemFile = FileUtil.getFileOrCreate("data${File.separator}${event.entity.player!!.uniqueId}${File.separator}${LocalDateTime.now()}.yml")
         val worldConfig = ConfigModule.worldConfigModule(event) ?: return debug("玩家暂未被托管")
         val permConfig = ConfigModule.permConfigModule(worldConfig as ArrayList<File>, event)
         if (permConfig == null) {
@@ -39,56 +39,67 @@ object PluginHandle {
         val preScriptEnable = getKey(permConfig.first(), "Options.Action.Pre.Enable").toBoolean()
         if (preScriptEnable) {
             if (KetherHandle.runKetherHandle(permConfig.first(), event, "Pre"))
-                mainHandle(redeemFile, permConfig, dropPath, event)
+                mainHandle(permConfig, dropPath, event)
         }
     }
 
-    private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File, event: PlayerDeathEvent) {
+    private fun mainHandle(config: ArrayList<File>,drop: File, event: PlayerDeathEvent) {
         debug("<->mainHandle开始运行...")
-        debug("redeem -> $redeem")
         debug("config -> $config")
         debug("drop -> $drop")
         val dropItemList = DropModule.preDropModule(event,drop)
         val spawn = SpawnModule.spawnModule(event, config.first())
-        postHandle(dropItemList, spawn, config.first(), event)
+        postHandle(dropItemList, spawn, config.first(), event, drop)
     }
 
-    private fun postHandle(list: Pair<MutableList<Int>, Int?>, spawn: Location?, config: File, event: PlayerDeathEvent) {
-        val removedItems = mutableListOf<ItemStack>()
-        val time = SpawnModule.spawnAuto(config)
-        val dropItemList = list.first
-        if (time != 0.clong) {
-            Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
-                val inv = event.entity.player!!.inventory
-
-                for (dropId in dropItemList) {
-                    val itemS = inv.getItem(dropId)
-                    inv.removeItem(itemS)
-                    if (getKey(config, "Options.ItemRedemption.Enable").toBoolean()) {
-                        val reConf = getFileKey(RedeemFileList as ArrayList<File>, "Options.Key").filter { it.second == getKey(config, "Options.ItemRedemption.Bind") }.map { it.first }.first()
-                        val perm = getKey(reConf, "Options.Perm")
-                        val verify = event.entity.player!!.hasPermission(perm!!)
-                        if (!verify) {
-                            val world = event.entity.world
-                            val loc = event.entity.location
-                            world.dropItem(loc, itemS!!)
-                        }
-                    }
-                    removedItems.add(itemS!!)
-                }
-                event.entity.player!!.exp = (event.entity.player!!.totalExperience - list.second!!).toFloat()
-               event.entity.spigot().respawn()
-                event.entity.player!!.teleport(spawn!!)
-            }, time)
+    private fun postHandle(list: Pair<MutableList<Int>, Int?>, spawn: Location?, config: File, event: PlayerDeathEvent, drop: File) {
+        var tick = 0
+        if (getKey(config, "Options.PlayerSpawn.AutoRespawn.Enable").toBoolean()) {
+            tick = getKey(config, "Options.PlayerSpawn.AutoRespawn.Time")!!.toInt()
         }
 
+        Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
+            event.entity.spigot().respawn()
+            event.entity.player!!.teleport(spawn!!)
+        }, tick.toLong())
+
+        val redeemConfigList = getFileKey(RedeemFileList as ArrayList<File>, "Options.Key")
+        val redeemConfig = redeemConfigList.filter { it.second == getKey(config, "Options.ItemRedemption.Bind") }
+        val redeemConf = redeemConfig.first { getKey(it.first, "Options.ItemRedemption.Enable").toBoolean() }.first
+        val redeemPerm = getKey(redeemConf, "Options.Perm")
+
+        val removedItems = mutableListOf<ItemStack>()
+        val slotList = list.first as ArrayList<Int>
+        val player = event.entity.player
+        val world = player!!.world
+        val inv = player.inventory
+        val loc = player.location
+        for (slot in slotList) {
+            val iStack = inv.getItem(slot)
+            removedItems.add(iStack!!)
+            inv.setItem(slot, ItemStack(Material.AIR))
+            if (!player.hasPermission(redeemPerm!!)) {
+                world.dropItem(loc, iStack)
+            }
+        }
+
+        val newExpLevel = list.second
+        val didnt = getKey(drop, "Options.Drop.Exp.Didnt")?.toInt()
+        if (didnt == 0) {
+            player.level = newExpLevel!!.toInt()
+        } else {
+            if (player.level >= didnt!!) {
+                player.level = newExpLevel!!.toInt()
+            }
+        }
 
         //Post Action
         val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
         if (postScriptEnable) {
             KetherHandle.runKetherHandle(config, event, "Post")
         }
-        RedeemModule.preRedeemModule(removedItems)
+        val redeemFile = FileUtil.getFileOrCreate("data/${event.entity.player!!.uniqueId}/${System.currentTimeMillis()}.yml")
+        RedeemModule.preRedeemModule(removedItems, redeemFile)
         return debug("ColdEstiny -> Finish")
     }
 }

@@ -14,7 +14,7 @@ object RedeemModule {
         console().sendLang("plugin-loadModule", KEY, configFileList.size ,"赎回组")
     }
 
-    fun preRedeemModule(itemList: MutableList<ItemStack>) {
+    fun preRedeemModule(itemList: MutableList<ItemStack>, conf: File) {
         ToolsUtil.debug("<->preRedeemModule 运行...")
         ToolsUtil.debug("itemList -> $itemList")
         ToolsUtil.debug("赎回还没做好o~")

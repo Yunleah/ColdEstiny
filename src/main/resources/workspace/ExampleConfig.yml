@@ -41,8 +41,8 @@ Options:
     AutoRespawn:
       #是否启用
       Enable: true
-      #延迟时间[单位s]
-      Time: 1s
+      #延迟时间[单位Tick]
+      Time: 1
     #配置重生点
     Spawn:
       #重生地点类型[death:死亡点,coo：坐标, loc: 重生点]
