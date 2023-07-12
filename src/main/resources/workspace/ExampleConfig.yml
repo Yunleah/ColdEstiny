@@ -50,7 +50,6 @@ Options:
       Info: 100 100 100 world
   #配置物品赎回
   ItemRedemption:
-    #是否启用
     Enable: true
     #绑定赎回组
     Bind: Example

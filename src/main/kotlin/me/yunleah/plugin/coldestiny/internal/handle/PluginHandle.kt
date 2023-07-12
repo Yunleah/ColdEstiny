@@ -1,28 +1,23 @@
 package me.yunleah.plugin.coldestiny.internal.handle
 
-import me.yunleah.plugin.coldestiny.ColdEstiny
-import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
-import me.yunleah.plugin.coldestiny.internal.event.event
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
+import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.RedeemFileList
+import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
-import me.yunleah.plugin.coldestiny.internal.module.DropModule.verify
+import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
 import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
-import me.yunleah.plugin.coldestiny.util.DropUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil
-import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
-import me.yunleah.plugin.coldestiny.util.KetherUtil
-import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
-import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
+import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.*
-import taboolib.module.kether.KetherShell
-import taboolib.module.kether.printKetherErrorMessage
+import taboolib.common5.clong
 import taboolib.module.lang.sendError
+import taboolib.platform.util.bukkitPlugin
 import java.io.File
 import java.time.LocalDateTime
 
@@ -40,7 +35,12 @@ object PluginHandle {
         val configPath = permConfig.first().toString()
         val dropPath = DropModule.dropFileModule(configPath, DropFileList as ArrayList<File>)?.first()
             ?: return console().sendError("DropConfig -> Null")
-        mainHandle(redeemFile, permConfig, dropPath, event)
+        //Pre Action
+        val preScriptEnable = getKey(permConfig.first(), "Options.Action.Pre.Enable").toBoolean()
+        if (preScriptEnable) {
+            if (KetherHandle.runKetherHandle(permConfig.first(), event, "Pre"))
+                mainHandle(redeemFile, permConfig, dropPath, event)
+        }
     }
 
     private fun mainHandle(redeem: File, config: ArrayList<File>,drop: File, event: PlayerDeathEvent) {
@@ -54,45 +54,39 @@ object PluginHandle {
     }
 
     private fun postHandle(dropItemList: MutableList<Int>, spawn: Location?, config: File, event: PlayerDeathEvent) {
-        val preScriptEnable = getKey(config, "Options.Action.Pre.Enable").toBoolean()
-        var result = ""
-        if (preScriptEnable) {
-            try {
-                debug("Run Pre Kether...")
-                val script = getKey(config, "Options.Action.Pre.Script")
-                KetherUtil.stringUtil(script!!).toKetherScript().runActions {
-                    this.sender = adaptCommandSender(event.entity.player!!)
-                }.thenAccept {
-                    result = it as String
-                    debug(" §5§l‹ ›§r §7Result: §f$it")
+        val removedItems = mutableListOf<ItemStack>()
+        val time = SpawnModule.spawnAuto(config)
+        if (time != 0.clong) {
+            Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
+                val inv = event.entity.player!!.inventory
+
+                for (dropId in dropItemList) {
+                    val itemS = inv.getItem(dropId)
+                    inv.removeItem(itemS)
+                    if (getKey(config, "Options.ItemRedemption.Enable").toBoolean()) {
+                        val reConf = getFileKey(RedeemFileList as ArrayList<File>, "Options.Key").filter { it.second == getKey(config, "Options.ItemRedemption.Bind") }.map { it.first }.first()
+                        val perm = getKey(reConf, "Options.Perm")
+                        val verify = event.entity.player!!.hasPermission(perm!!)
+                        if (!verify) {
+                            val world = event.entity.world
+                            val loc = event.entity.location
+                            world.dropItem(loc, itemS!!)
+                        }
+                    }
+                    removedItems.add(itemS!!)
                 }
-            } catch (e: Exception) {
-                e.printKetherErrorMessage()
-            }
-            if (!result.toBoolean()) {
-                return debug("§5§l‹ ›§r §7Result: §f$result")
-            }
+               event.entity.spigot().respawn()
+                event.entity.player!!.teleport(spawn!!)
+            }, time)
         }
-        //Pre Action
-
-
 
 
         //Post Action
         val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
         if (postScriptEnable) {
-            try {
-                debug("Run Post Kether...")
-                val script = getKey(config, "Options.Action.Post.Script")
-                KetherUtil.stringUtil(script!!).toKetherScript().runActions {
-                    this.sender = adaptCommandSender(event.entity.player!!)
-                }.thenAccept {
-                    debug(" §5§l‹ ›§r §7Result: §f$it")
-                }
-            } catch (e: Exception) {
-                e.printKetherErrorMessage()
-            }
+            KetherHandle.runKetherHandle(config, event, "Post")
         }
+        RedeemModule.preRedeemModule(removedItems)
         return debug("ColdEstiny -> Finish")
     }
 }

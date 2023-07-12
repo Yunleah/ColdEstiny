@@ -9,6 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
+import taboolib.common5.clong
 import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
 import java.io.File
@@ -52,5 +53,11 @@ object SpawnModule {
             }
         }
         return null
+    }
+
+    fun spawnAuto(config: File): Long {
+        val timeEnable = getKey(config, "Options.PlayerSpawn.AutoRespawn.Enable").toBoolean()
+        if (!timeEnable) { return 0.clong }
+        return getKey(config, "Options.PlayerSpawn.AutoRespawn.Time")!!.removeSuffix("s").clong
     }
 }

@@ -46,6 +46,7 @@ object ColdEstinyLoader {
             this.sender = console()
         }
         ToolsUtil.debug("Debug模式已开启!")
+
     }
     @Awake(LifeCycle.DISABLE)
     fun disable() {

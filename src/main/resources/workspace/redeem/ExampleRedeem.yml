@@ -2,11 +2,7 @@ Options:
   #赎回组Kay
   Key: Example
   #权限配置
-  Perm:
-    #是否启用
-    Enable: false
-    #权限
-    Info: "ce.redeem.example"
+  Perm: "perm.ce.redeem"
   #时间限制
   RedeemTime:
     #是否启用
