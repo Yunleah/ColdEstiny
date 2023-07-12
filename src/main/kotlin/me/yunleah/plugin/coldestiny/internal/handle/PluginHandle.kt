@@ -61,7 +61,7 @@ object PluginHandle {
                 debug("Run Pre Kether...")
                 val script = getKey(config, "Options.Action.Pre.Script")
                 script!!.toKetherScript().runActions {
-                    this.sender = adaptCommandSender(sender!!)
+                    this.sender = adaptCommandSender(event.entity.player!!)
                 }.thenAccept {
                     result = it as String
                     debug(" §5§l‹ ›§r §7Result: §f$it")
@@ -88,7 +88,7 @@ object PluginHandle {
                 debug("Run Post Kether...")
                 val script = getKey(config, "Options.Action.Post.Script")
                 script!!.toKetherScript().runActions {
-                    this.sender = adaptCommandSender(sender!!)
+                    this.sender = adaptCommandSender(event.entity.player!!)
                 }.thenAccept {
                     debug(" §5§l‹ ›§r §7Result: §f$it")
                 }

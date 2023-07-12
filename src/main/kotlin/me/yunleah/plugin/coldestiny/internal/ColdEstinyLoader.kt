@@ -9,6 +9,7 @@ import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
 import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
+import me.yunleah.plugin.coldestiny.util.KetherUtil.stringUtil
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import taboolib.common.LifeCycle
@@ -40,8 +41,9 @@ object ColdEstinyLoader {
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
         RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
-        "def main = { print 'Kether模块已加载' }".toKetherScript().runActions {
-            this.sender = adaptCommandSender(sender!!)
+        val script = "tell 'Kether模块已加载...'"
+        stringUtil(script).toKetherScript().runActions {
+            this.sender = console()
         }
         ToolsUtil.debug("Debug模式已开启!")
     }
