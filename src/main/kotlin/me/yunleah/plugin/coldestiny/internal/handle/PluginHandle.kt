@@ -53,9 +53,10 @@ object PluginHandle {
         postHandle(dropItemList, spawn, config.first(), event)
     }
 
-    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location?, config: File, event: PlayerDeathEvent) {
+    private fun postHandle(list: Pair<MutableList<Int>, Int?>, spawn: Location?, config: File, event: PlayerDeathEvent) {
         val removedItems = mutableListOf<ItemStack>()
         val time = SpawnModule.spawnAuto(config)
+        val dropItemList = list.first
         if (time != 0.clong) {
             Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
                 val inv = event.entity.player!!.inventory
@@ -75,6 +76,7 @@ object PluginHandle {
                     }
                     removedItems.add(itemS!!)
                 }
+                event.entity.player!!.exp = (event.entity.player!!.totalExperience - list.second!!).toFloat()
                event.entity.spigot().respawn()
                 event.entity.player!!.teleport(spawn!!)
             }, time)

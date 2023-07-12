@@ -44,7 +44,7 @@ object DropModule {
         }
     }
 
-    fun preDropModule(event: PlayerDeathEvent, drop: File): MutableList<Int> {
+    fun preDropModule(event: PlayerDeathEvent, drop: File): Pair<MutableList<Int>, Int?> {
 
         val itemSlotPair = mutableListOf<Pair<Int, ItemStack>>()
         for (i in 0 until event.entity.inventory.size) {
@@ -56,7 +56,7 @@ object DropModule {
         return mainDropModule(event, itemSlotPair, drop)
     }
 
-    private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): MutableList<Int> {
+    private fun mainDropModule(event: PlayerDeathEvent,slotPair: MutableList<Pair<Int, ItemStack>>, drop: File): Pair<MutableList<Int>, Int?> {
         debug("玩家${event.entity.player!!.name}Inv物品列表 -> $slotPair")
         val dropPackInfo = getKey(drop, "Options.Drop.Pack.Info")
         debug("dropPackInfo -> $dropPackInfo")
@@ -76,9 +76,9 @@ object DropModule {
         debug("infoPack -> $infoPack")
         debug("infoExp -> $infoExp")
         debug("ItemEnable -> $itemEnable")
-        return postDropModule(infoPack, infoPack, itemEnable.toBoolean(), getKey(drop, "Options.Item.Type"), getKey(drop, "Options.Item.Info"))
+        return postDropModule(infoPack, infoExp, itemEnable.toBoolean(), getKey(drop, "Options.Item.Type"), getKey(drop, "Options.Item.Info"))
     }
-    private fun postDropModule(packDrop:  MutableList<Pair<Int, ItemStack>>?, expDrop:  MutableList<Pair<Int, ItemStack>>?, enable: Boolean, type: String?, info: String?): MutableList<Int> {
+    private fun postDropModule(packDrop:  MutableList<Pair<Int, ItemStack>>?, expDrop:  Int?, enable: Boolean, type: String?, info: String?): Pair<MutableList<Int>, Int?> {
         debug("<->postDropModule 运行...")
         debug("infoPack -> $packDrop")
         debug("infoExp -> $expDrop")
@@ -102,7 +102,7 @@ object DropModule {
             }
         }
         debug("剔除保护物品后列表 ->$newPackDrop")
-        return newPackDrop
+        return newPackDrop to expDrop
     }
 }
 

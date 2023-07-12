@@ -13,8 +13,6 @@ object PlayerDeathListener {
         event.keepLevel = true
         event.keepInventory = true
         ToolsUtil.debug("监听到玩家死亡 => ${event.entity.player!!.name}")
-        submit(async = true) {
-            PluginHandle.preHandle(event)
-        }
+        PluginHandle.preHandle(event)
     }
 }
