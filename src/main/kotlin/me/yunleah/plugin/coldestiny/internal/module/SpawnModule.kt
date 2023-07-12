@@ -4,34 +4,51 @@ import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
+import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
+import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
 import java.io.File
 import javax.tools.Tool
 
 object SpawnModule {
     fun spawnModule(event: PlayerDeathEvent, config: File): Location? {
+        debug("spawnModule -> Run")
         val spawnType = getKey(config, "Options.PlayerSpawn.Spawn.Type").toString()
+        debug("spawnType -> $spawnType")
         when (spawnType) {
             "death" -> {
-                return event.entity.lastDeathLocation
+                debug("Type -> death")
+                val lastDeathLocation = event.entity.location
+                debug("Location -> $lastDeathLocation")
+                return lastDeathLocation
             }
 
             "coo" -> {
+                debug("Type -> coo")
                 val coo = getKey(config, "Options.PlayerSpawn.Spawn.Info").toString()
                 val world = coo.split(" ").last().toString()
-                val xyz = coo.removeSuffix(world).split(" ")
+                val xyz = coo.removeSuffix(" $world").split(" ")
                 val x = xyz[0].toDouble()
                 val y = xyz[1].toDouble()
                 val z = xyz[2].toDouble()
-                return Location(Bukkit.getWorld(world), x, y, z)
+                val location = Location(Bukkit.getWorld(world), x, y, z)
+                debug("Location -> $location")
+                return location
             }
 
             "loc" -> {
-                return event.entity.player!!.bedSpawnLocation
+                debug("Type -> loc")
+                val bedSpawnLocation = event.entity.player?.world?.spawnLocation
+                if (bedSpawnLocation != null) {
+                    debug("Location -> $bedSpawnLocation")
+                    return bedSpawnLocation
+                } else {
+                    console().sendError("世界[${event.entity.player?.world?.name}] -> 不存在重生点!")
+                }
             }
         }
         return null

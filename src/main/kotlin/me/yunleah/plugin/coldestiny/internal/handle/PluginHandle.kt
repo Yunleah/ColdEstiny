@@ -12,6 +12,7 @@ import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
 import me.yunleah.plugin.coldestiny.util.DropUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.FileUtil.saveResourceNotWarn
+import me.yunleah.plugin.coldestiny.util.KetherUtil
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
@@ -49,18 +50,17 @@ object PluginHandle {
         debug("drop -> $drop")
         val dropItemList = DropModule.preDropModule(event,drop)
         val spawn = SpawnModule.spawnModule(event, config.first())
-        postHandle(dropItemList, spawn!!, config.first(), event)
+        postHandle(dropItemList, spawn, config.first(), event)
     }
 
-    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location, config: File, event: PlayerDeathEvent) {
-        //TODO Kether-Action Pre
+    private fun postHandle(dropItemList: MutableList<Int>, spawn: Location?, config: File, event: PlayerDeathEvent) {
         val preScriptEnable = getKey(config, "Options.Action.Pre.Enable").toBoolean()
         var result = ""
         if (preScriptEnable) {
             try {
                 debug("Run Pre Kether...")
                 val script = getKey(config, "Options.Action.Pre.Script")
-                script!!.toKetherScript().runActions {
+                KetherUtil.stringUtil(script!!).toKetherScript().runActions {
                     this.sender = adaptCommandSender(event.entity.player!!)
                 }.thenAccept {
                     result = it as String
@@ -73,21 +73,18 @@ object PluginHandle {
                 return debug("§5§l‹ ›§r §7Result: §f$result")
             }
         }
+        //Pre Action
 
 
 
 
-
-
-
-
-        //TODO Kether-Action Post
+        //Post Action
         val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
         if (postScriptEnable) {
             try {
                 debug("Run Post Kether...")
                 val script = getKey(config, "Options.Action.Post.Script")
-                script!!.toKetherScript().runActions {
+                KetherUtil.stringUtil(script!!).toKetherScript().runActions {
                     this.sender = adaptCommandSender(event.entity.player!!)
                 }.thenAccept {
                     debug(" §5§l‹ ›§r §7Result: §f$it")

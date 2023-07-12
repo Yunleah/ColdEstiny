@@ -74,11 +74,8 @@ object MathUtil {
     fun getExpMath(text: String?, type: String, event:  PlayerDeathEvent): Int? {
         debug("Exp when Type...")
         debug("type -> $type")
-        val exp = event.entity.exp
-        debug("玩家经验条占比 -> $exp")
-        val expToLevel = event.entity.player!!.expToLevel
-        debug("玩家当前等级所需经验 -> $expToLevel")
-        val playerExp = (expToLevel * exp).toInt()
+
+        val playerExp = event.entity.totalExperience
         debug("玩家当时实际总经验 -> $playerExp")
         when (type) {
             "per" -> {
