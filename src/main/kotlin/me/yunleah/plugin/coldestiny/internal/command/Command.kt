@@ -2,6 +2,7 @@ package me.yunleah.plugin.coldestiny.internal.command
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
+import me.yunleah.plugin.coldestiny.internal.command.subcommand.Redeem
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Reload
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
@@ -62,4 +63,6 @@ object Command {
     }
     @CommandBody
     val reload = Reload.reload
+    @CommandBody
+    val redeem = Redeem
 }

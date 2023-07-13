@@ -14,4 +14,5 @@ object ColdEstiny : Plugin() {
 
     @Config("setting.yml", true)
     lateinit var setting: ConfigFile
+
 }

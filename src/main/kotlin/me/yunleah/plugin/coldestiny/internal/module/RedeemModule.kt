@@ -3,6 +3,7 @@ package me.yunleah.plugin.coldestiny.internal.module
 import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
+import me.yunleah.plugin.coldestiny.internal.manager.saveItemsToFile
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.configuration.file.YamlConfiguration
@@ -16,6 +17,7 @@ import java.io.File
 import java.io.InputStreamReader
 
 object RedeemModule {
+    private lateinit var redeemConf: File
     fun loadConfigModule(configFile:  ArrayList<File>) {
         val configFileList = configFile.filter { it.name.endsWith("Redeem.yml") }
         console().sendLang("plugin-loadModule", KEY, configFileList.size ,"赎回组")
@@ -29,7 +31,7 @@ object RedeemModule {
         val tt = System.currentTimeMillis()
         val originFile = ColdEstiny.plugin.getResource("data/PlayerRedeemFormat")
 
-        val redeemConf = FileUtil.getFileOrCreate("data/${event.entity.player!!.uniqueId}/setting.yml")
+        redeemConf = FileUtil.getFileOrCreate("data/${event.entity.player!!.uniqueId}/setting.yml")
 
         val originYaml = originFile?.let {
             YamlConfiguration.loadConfiguration(InputStreamReader(it, "UTF-8"))
@@ -78,5 +80,8 @@ object RedeemModule {
         debug("itemList -> $itemList")
         debug("file -> $file")
         debug("赎回还在做哦~")
+        val id = saveItemsToFile(itemList, file)
+        val redeemSettingYaml = loadConfiguration(redeemConf) as ConfigFile
+        redeemSettingYaml["Options.Size"] = id
     }
 }
