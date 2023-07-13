@@ -8,7 +8,6 @@ import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
 import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
 import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
-import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -19,8 +18,6 @@ import taboolib.common.platform.function.*
 import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
 import java.io.File
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 object PluginHandle {
     fun preHandle(event: PlayerDeathEvent) {
@@ -98,8 +95,7 @@ object PluginHandle {
         if (postScriptEnable) {
             KetherHandle.runKetherHandle(config, event, "Post")
         }
-        val redeemFile = FileUtil.getFileOrCreate("data/${event.entity.player!!.uniqueId}/${System.currentTimeMillis()}.yml")
-        RedeemModule.preRedeemModule(removedItems, redeemFile)
+        RedeemModule.preRedeemModule(removedItems, redeemConf, event)
         return debug("ColdEstiny -> Finish")
     }
 }

@@ -7,5 +7,7 @@ Options:
   RedeemTime:
     #是否启用
     Enable: false
-    #时间
-    Time: 1day
+    #时间[Type：S,M,H,D]
+    Time:
+      Type: D
+      Time: 1
