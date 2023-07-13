@@ -19,6 +19,7 @@ import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
 import java.io.File
 
+
 object PluginHandle {
     fun preHandle(event: PlayerDeathEvent) {
         debug("<->preHandle开始运行...")
