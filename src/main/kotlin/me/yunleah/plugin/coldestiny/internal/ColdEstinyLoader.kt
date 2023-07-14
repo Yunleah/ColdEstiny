@@ -15,7 +15,6 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
-import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.console
 import taboolib.module.lang.sendLang
 import taboolib.module.metrics.Metrics
@@ -41,8 +40,8 @@ object ColdEstinyLoader {
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
         RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
-        val script = "tell 'Kether模块已加载...'"
-        stringUtil(script).toKetherScript().runActions {
+        val scriptKE = "tell 'Kether模块已加载...'"
+        stringUtil(scriptKE).toKetherScript().runActions {
             this.sender = console()
         }
         ToolsUtil.debug("Debug模式已开启!")

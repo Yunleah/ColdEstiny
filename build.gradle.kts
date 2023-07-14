@@ -31,6 +31,12 @@ repositories {
     mavenCentral()
 }
 
+configurations{
+    maybeCreate("packShadow")
+    get("compileOnly").extendsFrom(get("packShadow"))
+    get("packShadow").extendsFrom(get("taboo"))
+}
+
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11902:11902-minimize:mapped")
