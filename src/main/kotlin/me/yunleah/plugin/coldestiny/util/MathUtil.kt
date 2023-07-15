@@ -76,11 +76,8 @@ object MathUtil {
         return null
     }
 
-    fun getExpMath(text: String?, type: String, event:  PlayerDeathEvent): Int? {
+    fun getExpMath(text: String?, event:  PlayerDeathEvent): Int? {
         debug("Exp when Type...")
-        debug("type -> $type")
-
-        debug("DropExpType -> $type")
         if (!text!!.endsWith("%")) { return null }
         debug("Info合法 -> $text...")
         val per = text.removeSuffix("%").toDouble() / 100.0

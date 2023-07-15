@@ -4,7 +4,6 @@ import taboolib.common.platform.Plugin
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigFile
 import taboolib.platform.BukkitPlugin
-import java.io.File
 
 object ColdEstiny : Plugin() {
 

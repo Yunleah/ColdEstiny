@@ -11,7 +11,6 @@ object FileManager {
     @Awake(LifeCycle.LOAD)
     fun createFile() {
         ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}drop${File.separator}ExampleDrop.yml", false)
-        ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}redeem${File.separator}ExampleRedeem.yml", false)
         ColdEstiny.plugin.saveResourceNotWarn("workspace${File.separator}ExampleConfig.yml", false)
 
     }

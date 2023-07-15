@@ -2,19 +2,24 @@ package me.yunleah.plugin.coldestiny.internal.command
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
-import me.yunleah.plugin.coldestiny.internal.command.subcommand.Redeem
+import me.yunleah.plugin.coldestiny.internal.command.subcommand.Dev
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Reload
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common5.Mirror
+import taboolib.common5.mirrorFuture
+import taboolib.common5.mirrorNow
 import taboolib.expansion.createHelper
 import taboolib.module.kether.printKetherErrorMessage
+import taboolib.platform.BukkitAdapter
 import taboolib.platform.util.sendLang
 
 @CommandHeader(
@@ -23,6 +28,7 @@ import taboolib.platform.util.sendLang
     description = "ColdEstiny Main Command"
 )
 object Command {
+    val bukkitAdapter = BukkitAdapter()
     @CommandBody
     val main = mainCommand { createHelper() }
     @CommandBody
@@ -64,5 +70,5 @@ object Command {
     @CommandBody
     val reload = Reload.reload
     @CommandBody
-    val redeem = Redeem
+    val dev = Dev.dev
 }

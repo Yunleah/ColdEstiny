@@ -1,12 +1,9 @@
 package me.yunleah.plugin.coldestiny.internal.handle
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
-import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.RedeemFileList
-import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
-import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
 import me.yunleah.plugin.coldestiny.internal.module.SpawnModule
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Bukkit
@@ -61,11 +58,6 @@ object PluginHandle {
             event.entity.player!!.teleport(spawn!!)
         }, tick.toLong())
 
-        val redeemConfigList = getFileKey(RedeemFileList as ArrayList<File>, "Options.Key")
-        val redeemConfig = redeemConfigList.filter { it.second == getKey(config, "Options.ItemRedemption.Bind") }
-        val redeemConf = redeemConfig.first { getKey(it.first, "Options.ItemRedemption.Enable").toBoolean() }.first
-        val redeemPerm = getKey(redeemConf, "Options.Perm")
-
         val removedItems = mutableListOf<ItemStack>()
         val slotList = list.first as ArrayList<Int>
         val player = event.entity.player
@@ -76,9 +68,7 @@ object PluginHandle {
             val iStack = inv.getItem(slot)
             removedItems.add(iStack!!)
             inv.setItem(slot, ItemStack(Material.AIR))
-            if (!player.hasPermission(redeemPerm!!)) {
-                world.dropItem(loc, iStack)
-            }
+            world.dropItem(loc, iStack)
         }
 
         val newExpLevel = list.second
@@ -96,7 +86,6 @@ object PluginHandle {
         if (postScriptEnable) {
             KetherHandle.runKetherHandle(config, event, "Post")
         }
-        RedeemModule.preRedeemModule(removedItems, redeemConf, event)
         return debug("ColdEstiny -> Finish")
     }
 }

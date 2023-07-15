@@ -10,8 +10,6 @@ import java.io.File
 object ConfigManager {
     val Setting_Debug: Boolean
         get() = ColdEstiny.setting.getBoolean("Options.Debug")
-    val RedeemFileList
-        get() = FileUtil.getAllFiles(File(getDataFolder(), File.separator + "workspace/redeem")).filter { it.name.endsWith("Redeem.yml") }
     val DropFileList
         get() = FileUtil.getAllFiles(File(getDataFolder(), File.separator + "workspace/drop")).filter { it.name.endsWith("Drop.yml") }
     val ConfigFileList

@@ -4,10 +4,8 @@ import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.ConfigFileList
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
-import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.RedeemFileList
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
 import me.yunleah.plugin.coldestiny.internal.module.DropModule
-import me.yunleah.plugin.coldestiny.internal.module.RedeemModule
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.stringUtil
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
@@ -39,7 +37,6 @@ object ColdEstinyLoader {
         console().sendLang("plugin-enable", KEY)
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
-        RedeemModule.loadConfigModule(RedeemFileList as ArrayList<File>)
         val scriptKE = "tell 'Kether模块已加载...'"
         stringUtil(scriptKE).toKetherScript().runActions {
             this.sender = console()
