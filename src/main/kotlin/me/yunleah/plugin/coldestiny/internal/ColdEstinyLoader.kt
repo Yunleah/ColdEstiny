@@ -37,7 +37,7 @@ object ColdEstinyLoader {
         console().sendLang("plugin-enable", KEY)
         DropModule.loadDropModule(DropFileList as ArrayList<File>)
         ConfigModule.loadConfigModule(ConfigFileList as ArrayList<File>)
-        val scriptKE = "tell 'Kether模块已加载...'"
+        val scriptKE = "tell '§7[ §3Cold§bEstiny §7] §fKether模块已加载...'"
         stringUtil(scriptKE).toKetherScript().runActions {
             this.sender = console()
         }

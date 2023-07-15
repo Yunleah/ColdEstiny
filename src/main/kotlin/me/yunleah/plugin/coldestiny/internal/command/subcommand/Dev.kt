@@ -2,6 +2,8 @@ package me.yunleah.plugin.coldestiny.internal.command.subcommand
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.command.Command
+import me.yunleah.plugin.coldestiny.util.ToolsUtil
+import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import net.minecraft.nbt.NBTTagType
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -16,36 +18,40 @@ import taboolib.module.chat.TellrawJson
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.*
 import taboolib.platform.util.hasLore
+import taboolib.platform.util.sendLang
+import javax.tools.Tool
 
 object Dev {
     val dev = subCommand {
         literal("addLore", optional = true) {
             execute<Player> { sender, _, content ->
                 val item = sender.inventory.itemInMainHand
-                if (item.type == Material.AIR) return@execute console().sendWarn("plugin-format", KEY, "你手里拿着东西？？？")
+                if (item.type == Material.AIR) return@execute sender.sendLang("plugin-format", KEY, "你手里拿着东西？？？")
                 if (item.itemMeta == null) {
                     item.itemMeta = Bukkit.getItemFactory().getItemMeta(item.type)
                 }
+                if (content == "addLore") return@execute sender.sendLang("plugin-format", KEY, "你干什么，你加空气吗？")
                 val itemMeta = item.itemMeta
-                itemMeta!!.lore?.addAll(listOf(
-                    content
-                ))
-                item.itemMeta = itemMeta
-                if (item.hasLore(content)) console().sendLang("plugin-format", KEY, "以成功添加Lore！")
-                else console().sendWarn("plugin-format", KEY, "添加失败！")
+                val lore = item.itemMeta!!.lore?: arrayListOf()
+                lore.add(content.split(" ").last().replace("&", "§"))
+                itemMeta!!.lore = lore
+                item.setItemMeta(itemMeta)
+                if (item.hasLore(content.split(" ").last().replace("&", "§"))) sender.sendLang("plugin-format", KEY, "已成功添加Lore！")
+                else sender.sendLang("plugin-format", KEY, "添加失败！")
             }
         }
         literal("addNBT", optional = true) {
             execute<Player> { sender, _, content ->
                 val item = sender.inventory.itemInMainHand
-                if (item.type == Material.AIR) return@execute console().sendWarn("plugin-format", KEY, "你手里拿着东西？？？")
+                if (item.type == Material.AIR) return@execute sender.sendLang("plugin-format", KEY, "你手里拿着东西？？？")
                 val itemTag = item.getItemTag()
+                debug("")
                 itemTag.put("ColdEstiny", content)
                 item.setItemTag(itemTag)
                 if (item.getItemTag().contains("ColdEstiny")) {
                     val v = item.getItemTag()["ColdEstiny"].toString()
-                    if (v == content) console().sendLang("plugin-format", KEY, "以成功添加NBT！")
-                    else console().sendWarn("plugin-format", KEY, "添加失败！")
+                    if (v == content) sender.sendLang("plugin-format", KEY, "已成功添加NBT！")
+                    else sender.sendLang("plugin-format", KEY, "添加失败！")
                 }
             }
         }
@@ -53,10 +59,11 @@ object Dev {
             execute<Player> { sender, _, _ ->
                 val item = sender.inventory.itemInMainHand
                 val meta = item.itemMeta
-                val lore = meta?.lore ?: return@execute console().sendWarn("plugin-format", KEY, "你手里的玩意有Lore？？？")
-                sender.sendMessage("§b§m                               §f[ §r§fLore §f]§b§m                               ")
-                lore.forEach { sender.sendMessage(it) }
-                sender.sendMessage("§b§m                               §f[ §r§fLore §f]§b§m                               ")
+                val lore = meta?.lore ?: arrayListOf()
+                sender.sendMessage("§b§m                               §f[ §r§3§lLore §f]§b§m                               ")
+                if (lore.isEmpty()) sender.sendMessage("")
+                else lore.forEach { sender.sendMessage(it) }
+                sender.sendMessage("§b§m                               §f[ §r§3§lLore §f]§b§m                               ")
             }
         }
         literal("getNBT", optional = true) {
@@ -83,7 +90,7 @@ object Dev {
 
     @JvmStatic
     fun ItemTag.format(): TellrawJson {
-        val result = TellrawJson().append("§b§m                               §f[ §r§fNBT §f]§b§m                               ")
+        val result = TellrawJson().append("§b§m                               §f[ §r§3§lNBT §f]§b§m                               \n")
         val iterator = this.iterator()
         while (iterator.hasNext()) {
             iterator.next().let { (key, value) ->
@@ -100,7 +107,7 @@ object Dev {
                 if (iterator.hasNext()) result.append("\n")
             }
         }
-        return result.append("§b§m                               §f[ §r§fNBT §f]§b§m                               ")
+        return result.append("\n§b§m                               §f[ §r§3§lNBT §f]§b§m                               ")
     }
 
     fun ItemTagType.asPostfix(): String {

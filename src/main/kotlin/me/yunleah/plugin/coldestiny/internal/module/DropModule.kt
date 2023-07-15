@@ -87,12 +87,12 @@ object DropModule {
         packDrop?.forEach { (id, itemStack) ->
             val itemMeta = itemStack.itemMeta
             if (enable && type == "lore" && itemMeta != null) {
-                val lore = itemMeta.lore?.joinToString("\n") ?: ""
-                if (lore.contains(info!!)) {
+                val lore = itemMeta.lore
+                if (!lore!!.contains(info)) {
                     newPackDrop.add(id)
                 }
             } else if (enable && type == "nbt") {
-                if (hasInfoTag(itemStack, info!!)) {
+                if (!hasInfoTag(itemStack, info!!)) {
                     newPackDrop.add(id)
                 }
             } else {
