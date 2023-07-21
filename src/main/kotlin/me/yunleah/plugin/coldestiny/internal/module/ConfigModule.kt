@@ -4,12 +4,14 @@ import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.ConfigFileList
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
+import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.submit
+import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import java.io.File
 
@@ -57,7 +59,12 @@ object ConfigModule {
         val fileTruePermList = permFileList.filter { it.second.toBoolean() }.map { it.first }
         val fileFalsePermList = permFileList.filter { !it.second.toBoolean() }.map { it.first }
         debug("获取的所有Perm启用的Config.yml列表 -> $fileTruePermList")
-        val fileKeyPermList = getFileKey(fileTruePermList as ArrayList<File>, "Options.Perm.Info").filter { event.entity.player!!.hasPermission(it.second) }.map { it.first }
+        var fileKeyPermList = getFileKey(fileTruePermList as ArrayList<File>, "Options.Perm.Info").filter { event.entity.player!!.hasPermission(it.second) }.map { it.first }
+        if (fileKeyPermList.size != 1) {
+            val list = getFileKey(fileTruePermList, "Options.Perm.Weight").map { it.second.cint } as ArrayList<Int>
+            val maxInt = list.max()
+            fileKeyPermList = getFileKey(fileTruePermList, "Options.Perm.Weight").filter { it.second.cint == maxInt }.map { it.first }
+        }
         val pFile = fileKeyPermList + fileFalsePermList
         debug("通过世界+权限判断确定的Config.yml -> $pFile")
         debug("§l-----------------------WorldConfig.yml-----------------------")

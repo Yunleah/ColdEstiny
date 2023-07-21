@@ -45,14 +45,10 @@ object Dev {
                 val item = sender.inventory.itemInMainHand
                 if (item.type == Material.AIR) return@execute sender.sendLang("plugin-format", KEY, "你手里拿着东西？？？")
                 val itemTag = item.getItemTag()
-                debug("")
-                itemTag.put("ColdEstiny", content)
-                item.setItemTag(itemTag)
-                if (item.getItemTag().contains("ColdEstiny")) {
-                    val v = item.getItemTag()["ColdEstiny"].toString()
-                    if (v == content) sender.sendLang("plugin-format", KEY, "已成功添加NBT！")
-                    else sender.sendLang("plugin-format", KEY, "添加失败！")
-                }
+                itemTag.put("ColdEstiny", content.split(" ").last())
+                sender.inventory.setItemInMainHand(item.setItemTag(itemTag))
+                if (sender.inventory.itemInMainHand.getItemTag().containsKey("ColdEstiny")) sender.sendLang("plugin-format", KEY, "已成功添加NBT！")
+                else sender.sendLang("plugin-format", KEY, "添加失败！")
             }
         }
         literal("getLore", optional = true) {

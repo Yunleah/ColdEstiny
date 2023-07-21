@@ -4,25 +4,16 @@ import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getFileKey
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.util.MathUtil
-import me.yunleah.plugin.coldestiny.util.NBTUtil.hasInfoTag
-import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
-import net.minecraft.world.item.Items
-import org.bukkit.entity.Item
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
-import taboolib.common5.cint
-import taboolib.module.kether.inferType
-import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
-import taboolib.module.nms.clone
 import taboolib.module.nms.getItemTag
-import taboolib.module.nms.setItemTag
-import taboolib.platform.util.isAir
+import taboolib.platform.util.hasLore
 import taboolib.platform.util.isNotAir
+import taboolib.platform.util.sendLang
 import java.io.File
-import kotlin.random.Random
 
 object DropModule {
     var verify: Boolean = false
@@ -81,26 +72,26 @@ object DropModule {
         debug("infoPack -> $packDrop")
         debug("infoExp -> $expDrop")
         debug("ItemEnable -> $enable")
-
-        val newPackDrop = mutableListOf<Int>()
-
-        packDrop?.forEach { (id, itemStack) ->
-            val itemMeta = itemStack.itemMeta
-            if (enable && type == "lore" && itemMeta != null) {
-                val lore = itemMeta.lore
-                if (!lore!!.contains(info)) {
-                    newPackDrop.add(id)
+        //lore
+        //nbt
+        if (enable) {
+            debug("物品lore/nbt判断已开启！")
+            debug("判断模式 -> $type")
+            debug("判断的nbt/lore -> $info")
+            when (type) {
+                "nbt" -> {
+                    packDrop?.removeIf {
+                        !it.second.getItemTag().containsKey("ColdEstiny")
+                    }
                 }
-            } else if (enable && type == "nbt") {
-                if (!hasInfoTag(itemStack, info!!)) {
-                    newPackDrop.add(id)
+                "lore" -> {
+                    packDrop?.removeIf {
+                        !it.second.hasLore(info)
+                    }
                 }
-            } else {
-                newPackDrop.add(id)
             }
         }
-        debug("剔除保护物品后列表 ->$newPackDrop")
-        return newPackDrop to expDrop
+        return packDrop!!.map { it.first }.toMutableList() to expDrop
     }
 }
 

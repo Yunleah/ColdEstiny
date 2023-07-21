@@ -11,6 +11,8 @@ Options:
   Perm:
     #是否启用
     Enable: true
+    #权重
+    Weight: 9999
     #权限
     Info: "ce.perm.example"
   #配置掉落组

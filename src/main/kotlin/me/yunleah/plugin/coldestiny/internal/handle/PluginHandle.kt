@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.*
 import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
+import taboolib.platform.util.isAir
+import taboolib.platform.util.isNotAir
 import java.io.File
 
 
@@ -68,7 +70,19 @@ object PluginHandle {
             val iStack = inv.getItem(slot)
             removedItems.add(iStack!!)
             inv.setItem(slot, ItemStack(Material.AIR))
-            world.dropItem(loc, iStack)
+            if (inv.getItem(slot).isNotAir()) {
+                debug("出现错误！物品未正确清理！ 已删除凋落物！")
+                inv.removeItem(inv.getItem(slot))
+                if (inv.getItem(slot).isNotAir()) {
+                    debug("Error 出错！")
+                } else {
+                    world.dropItem(loc, iStack)
+                }
+            }
+            else {
+                world.dropItem(loc, iStack)
+                debug("物品正确掉落！")
+            }
         }
 
         val newExpLevel = list.second
