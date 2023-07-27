@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.handle
 
+import me.yunleah.plugin.coldestiny.ColdEstiny.KEY
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.DropFileList
 import me.yunleah.plugin.coldestiny.internal.manager.GetManager.getKey
 import me.yunleah.plugin.coldestiny.internal.module.ConfigModule
@@ -9,13 +10,16 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Chest
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.*
 import taboolib.module.lang.sendError
 import taboolib.platform.util.bukkitPlugin
-import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
+import taboolib.platform.util.sendError
 import java.io.File
 
 
@@ -50,15 +54,20 @@ object PluginHandle {
     }
 
     private fun postHandle(list: Pair<MutableList<Int>, Int?>, spawn: Location?, config: File, event: PlayerDeathEvent, drop: File) {
-        var tick = 0
+        val tick: Int
+
+        val respawnEnable = getKey(config, "Options.PlayerSpawn.Spawn.Enable").toBoolean()
+
         if (getKey(config, "Options.PlayerSpawn.AutoRespawn.Enable").toBoolean()) {
             tick = getKey(config, "Options.PlayerSpawn.AutoRespawn.Time")!!.toInt()
+            Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
+                if (respawnEnable) {
+                    event.entity.spigot().respawn()
+                    event.entity.player!!.teleport(spawn!!)
+                }
+            }, tick.toLong())
         }
 
-        Bukkit.getScheduler().runTaskLater(bukkitPlugin, Runnable {
-            event.entity.spigot().respawn()
-            event.entity.player!!.teleport(spawn!!)
-        }, tick.toLong())
 
         val removedItems = mutableListOf<ItemStack>()
         val slotList = list.first as ArrayList<Int>
@@ -98,8 +107,40 @@ object PluginHandle {
         //Post Action
         val postScriptEnable = getKey(config, "Options.Action.Post.Enable").toBoolean()
         if (postScriptEnable) {
-            KetherHandle.runKetherHandle(config, event, "Post")
+            if (KetherHandle.runKetherHandle(config, event, "Post")) {
+                debug("Post-Action -> True")
+                debug("开始处理掉落箱")
+                val packLoc = event.entity.location
+                debug("已获取的Location -> $packLoc")
+                val block = packLoc.block
+                block.type = Material.CHEST
+                debug("Block -> $block")
+                val chest = block.state as Chest
+                debug("Chest -> $chest")
+                chest.customName = event.entity.player!!.name + "的死亡箱"
+                debug("customName -> ${event.entity.player!!.name}")
+                val deven = event
+                val chestInv = chest.blockInventory
+
+                removedItems.forEach { itemStack ->
+                    chestInv.addItem(itemStack)
+                }
+                chest.update()
+                @SubscribeEvent
+                fun onInventoryOpen(event: InventoryOpenEvent) {
+                    if (event.inventory.holder is Chest && (event.inventory.holder as Chest).location == chest.location) {
+                        if (event.player != deven.entity.player) {
+                            event.isCancelled = true
+                            event.player.sendError("plugin-format", KEY, "抱歉！这个箱子不属于你！")
+                        }
+                    }
+                }
+            }
         }
+
+
+
+
         return debug("ColdEstiny -> Finish")
     }
 }

@@ -81,12 +81,12 @@ object DropModule {
             when (type) {
                 "nbt" -> {
                     packDrop?.removeIf {
-                        !it.second.getItemTag().containsKey("ColdEstiny")
+                        it.second.getItemTag().containsKey("ColdEstiny")
                     }
                 }
                 "lore" -> {
                     packDrop?.removeIf {
-                        !it.second.hasLore(info)
+                        it.second.hasLore(info)
                     }
                 }
             }

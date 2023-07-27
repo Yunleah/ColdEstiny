@@ -60,7 +60,9 @@ object ConfigModule {
         val fileFalsePermList = permFileList.filter { !it.second.toBoolean() }.map { it.first }
         debug("获取的所有Perm启用的Config.yml列表 -> $fileTruePermList")
         var fileKeyPermList = getFileKey(fileTruePermList as ArrayList<File>, "Options.Perm.Info").filter { event.entity.player!!.hasPermission(it.second) }.map { it.first }
+        debug("【!】根据玩家权限判断后的配置 -> $fileKeyPermList")
         if (fileKeyPermList.size != 1) {
+            debug("多个配置文件 -> 开始权重判断...")
             val list = getFileKey(fileTruePermList, "Options.Perm.Weight").map { it.second.cint } as ArrayList<Int>
             val maxInt = list.max()
             fileKeyPermList = getFileKey(fileTruePermList, "Options.Perm.Weight").filter { it.second.cint == maxInt }.map { it.first }

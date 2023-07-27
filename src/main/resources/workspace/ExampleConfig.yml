@@ -48,6 +48,7 @@ Options:
     #配置重生点
     Spawn:
       #重生地点类型[death:死亡点,coo：坐标, loc: 重生点]
+      Enable: true
       Type: death
       Info: 100 100 100 world
   #配置物品赎回
