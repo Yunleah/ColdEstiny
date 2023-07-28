@@ -7,8 +7,6 @@ import taboolib.platform.BukkitPlugin
 
 object ColdEstiny : Plugin() {
 
-    const val KEY = "§3Cold§bEstiny"
-
     val plugin by lazy { BukkitPlugin.getInstance() }
 
     @Config("setting.yml", true)
