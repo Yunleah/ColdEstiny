@@ -2,16 +2,21 @@ package me.yunleah.plugin.coldestiny.util
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager
 import taboolib.common.platform.function.console
-import taboolib.module.lang.sendWarn
-import java.io.File
+import taboolib.common5.Coerce
+import taboolib.module.lang.sendLang
 
 object ToolsUtil {
     fun debug(text: String) {
-        if (ConfigManager.Setting_Debug)
-            return console().sendWarn("plugin-debug", text)
+        if (ConfigManager.settingDebugEnable) {
+          return console().sendLang("Plugin-Debug", text)
+        }
     }
 
-    fun getTrueFileList(file: ArrayList<File>, text: String): List<File> {
-        return file.filter { it.name.endsWith(text) }
+    fun timing(): Long {
+        return System.nanoTime()
+    }
+
+    fun timing(start: Long): Double {
+        return Coerce.format((System.nanoTime() - start).div(1000000.0))
     }
 }
