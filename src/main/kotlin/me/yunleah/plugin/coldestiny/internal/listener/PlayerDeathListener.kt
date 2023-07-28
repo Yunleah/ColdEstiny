@@ -13,6 +13,7 @@ object PlayerDeathListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun listenKeep(event: PlayerDeathEvent) {
         event.keepLevel = true
+
         event.keepInventory = true
         ToolsUtil.debug("KeepLevel -> ${event.keepLevel}")
         ToolsUtil.debug("KeepInventory -> ${event.keepInventory}")
@@ -20,9 +21,8 @@ object PlayerDeathListener {
     @SubscribeEvent(priority = EventPriority.LOW)
     fun listener(event: PlayerDeathEvent) {
         ToolsUtil.debug("当前死亡掉落模式 -> ${event.keepInventory}")
-        if (!event.keepInventory) {
-            event.keepInventory = true
-        }
+        if (!event.keepInventory)
+
         ToolsUtil.debug("监听到玩家死亡 => ${event.entity.player!!.name}")
         submit(async = true) {
             PluginHandle.preHandle(event)
