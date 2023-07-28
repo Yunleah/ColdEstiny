@@ -1,2 +1,6 @@
-DropOptions:
+DropGroup:
   GroupKey: 'ExampleDrop'
+  Options:
+    # [ 随机掉落|百分比掉落|指定格掉落|指定物品掉落|指定数掉落]
+    Mode: '百分比掉落'
+    Info: ''

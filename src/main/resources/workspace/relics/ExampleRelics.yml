@@ -1,2 +1,3 @@
-RelicsOptions:
+RelicsGroup:
   GroupKey: 'ExampleRelics'
+  Options:
