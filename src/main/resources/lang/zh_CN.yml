@@ -5,6 +5,7 @@
 
 Plugin-Loading: '&7正在加载 &3Cold&bEstiny&8&f... &8{0}'
 Plugin-Enabled: '&8[&3Cold&bEstiny&8] &b信息 &8| &6插件加载完毕.'
-Plugin-Disable: '&8[&3Cold&bEstiny&8] &b信息 &8| &6插件加载完毕.'
-Plugin-Reloaded: '&8[&3Cold&bEstiny&8] &ab信息 &8| &6插件重载完毕.'
+Plugin-Disable: '&8[&3Cold&bEstiny&8] &b信息 &8| &6插件卸载完毕.'
+Plugin-Reloaded: '&8[&3Cold&bEstiny&8] &b信息 &8| &6插件重载完毕.'
+Plugin-LoadFile: '&8[&3Cold&bEstiny&8] &b加载 &8| &6成功载入&f{0}&6个&f{1}&6组 耗时&f{2}&6ms.'
 Plugin-Debug: '&8[&3Cold&bEstiny&8] &e调试 &8| &f{0}'

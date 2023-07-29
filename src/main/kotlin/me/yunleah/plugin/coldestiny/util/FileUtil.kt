@@ -6,6 +6,14 @@ import java.io.*
 
 object FileUtil {
     /**
+     * 创建文件夹及其所有的父文件夹
+     */
+    @JvmStatic
+    fun createFolder(folder: File) {
+        folder.takeIf { !it.exists() }?.mkdirs()
+    }
+
+    /**
      * 保存默认文件(不进行替换)
      */
     @JvmStatic

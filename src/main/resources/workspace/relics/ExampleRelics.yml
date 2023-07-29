@@ -1,7 +1,7 @@
 RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
-    # ['原版' '限时死亡箱' '永久死亡箱']
+    # ['原版' '限时死亡箱' '永久死亡箱' '赎回']
     Mode: '限时死亡箱'
     # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
     Info: '10min'
@@ -13,9 +13,4 @@ RelicsGroup:
         tell inline '你的死亡箱还有 1min 消失哦~'
       10min: |-
         tell inline '你的死亡箱被服主偷走了哦~'
-    # [预设变量 生成死亡箱玩家 deathPlayer]
-    Condition: perm ce.relics.test
-    PreAction: |-
-      tell inline '你打开了 {{ deathPlayer name }} 的死亡箱!'
-    PostAction: |-
-      tell inline '你关闭了 {{ deathPlayer name }} 的死亡箱!'
+    Condition: 'perm ce.relics.test'
