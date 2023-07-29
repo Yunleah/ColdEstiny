@@ -1,3 +1,10 @@
 SelectGroup:
   GroupKey: 'ExampleSelect'
   Options:
+    # ['权限' '玩家']
+    Select: '玩家'
+    weigh: 10
+    Info:
+      - 'Yunleah763'
+      - 'LittleYunleah'
+
