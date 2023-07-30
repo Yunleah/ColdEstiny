@@ -13,7 +13,6 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.expansion.createHelper
 import taboolib.module.kether.printKetherErrorMessage
-import taboolib.platform.BukkitAdapter
 
 
 @CommandHeader(
@@ -22,7 +21,6 @@ import taboolib.platform.BukkitAdapter
     description = "ColdEstiny Main Command"
 )
 object Command {
-    val bukkitAdapter = BukkitAdapter()
     @CommandBody
     val main = mainCommand { createHelper() }
     @CommandBody

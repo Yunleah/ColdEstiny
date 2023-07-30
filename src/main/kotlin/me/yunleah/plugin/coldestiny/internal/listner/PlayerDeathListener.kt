@@ -1,9 +1,8 @@
 package me.yunleah.plugin.coldestiny.internal.listner
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.settingDeathInfo
-import me.yunleah.plugin.coldestiny.internal.module.ManagerModule
-import me.yunleah.plugin.coldestiny.internal.module.RegionModule
-import me.yunleah.plugin.coldestiny.internal.module.SelectModule
+import me.yunleah.plugin.coldestiny.internal.module.*
+import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.SectionUtil.getKey
@@ -26,8 +25,8 @@ object PlayerDeathListener {
         else
             debug("监听到玩家${event.entity.player!!.name}死亡 开始处理插件逻辑...")
         val startTime = timing()
-        // 关闭死亡不掉落
-        event.entity.world.setGameRule(GameRule.KEEP_INVENTORY, false)
+        // 设置世界死亡不掉落
+        event.entity.world.setGameRule(GameRule.KEEP_INVENTORY, true)
         // 获取Select
         val selectFile = SelectModule.checkSelect(event.entity.player!!)
         debug("获取到的Select -> $selectFile")
@@ -42,35 +41,38 @@ object PlayerDeathListener {
             //获取Pre-Action
             val preAction = getKey(managerFile!!, "ManagerGroup.runAction.Pre-Action")
             //运行Pre-Action
-            var preResult = false
-            try {
-                val script = if (preAction!!.startsWith("def")) {
-                    preAction
-                } else {
-                    "def main = { $preAction }"
-                }
-                script.toKetherScript().runActions {
-                    this.sender = adaptCommandSender(event.entity)
-                    if (sender is Player) {
-                        set("player", sender as Player)
-                        set("hand", (sender as Player).inventory.itemInMainHand)
-                    }
-                }.thenAccept {
-                    if (it != false) preResult = true
-                    debug("Pre-Action 未处理结果 -> $it")
-                }
-            } catch (e: Exception) {
-                e.printKetherErrorMessage()
-            }
+            val preResult = preAction?.runKether(event.entity)
             // Pre-Action 运行结果
-            debug("Pre-Action 处理后结果 -> $preResult")
-            if (preResult) {
-                // 设置世界死亡不掉落
-                event.entity.world.setGameRule(GameRule.KEEP_INVENTORY, true)
+            debug("Pre-Action 运行结果 -> $preResult")
+            if (preResult == true) {
+                //处理玩家掉落
+                //获取Drop
+                val dropFile = DropModule.checkDrop(managerFile)
+                debug("获取到的Drop -> $dropFile")
 
 
 
 
+
+
+
+
+                //获取Post-Action
+                val postAction = getKey(managerFile, "ManagerGroup.runAction.Post-Action")
+                //运行Post-Action
+                val postResult = postAction?.runKether(event.entity)
+                debug("Post-Action 运行结果 -> $postResult")
+                if (postResult == true) {
+                    //处理玩家遗物
+                    //获取Relics
+                    val relicsFile = RelicsModule.checkRelics(managerFile)
+                    debug("获取到的Relics -> $relicsFile")
+
+
+
+
+
+                }
             }
         } else {
             debug("Region & Select 不存在.")
