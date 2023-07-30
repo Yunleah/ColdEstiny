@@ -1,2 +1,9 @@
-RegionOptions:
+RegionGroup:
   GroupKey: 'ExampleRegion'
+  Weigh: 100
+  Options:
+    # [ 'world' 'res' 'gd']
+    Type: 'world'
+    Info:
+      - 'Test'
+      - 'Example'

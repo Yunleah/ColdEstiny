@@ -1,3 +1,10 @@
-SelectOptions:
+SelectGroup:
   GroupKey: 'ExampleSelect'
+  Weigh: 10
+  Options:
+    # ['perm' 'player']
+    Select: 'player'
+    Info:
+      - 'Yunleah763'
+      - 'LittleYunleah'
 

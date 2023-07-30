@@ -1,9 +1,0 @@
-ManagerOptions:
-  Key: 'ExampleManager'
-  BindGroup:
-    DropKey: 'ExampleDrop'
-    RegionKey: 'ExampleRegion'
-    RelicsKey: 'ExampleRelics'
-    SelectKey: 'ExampleSelect'
-
-
