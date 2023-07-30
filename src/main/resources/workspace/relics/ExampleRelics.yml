@@ -1,6 +1,8 @@
 RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
+    Condition: |-
+      perm ce.relics.test
     # ['原版' '限时死亡箱' '永久死亡箱' '赎回']
     Type: '限时死亡箱'
     # [单位: 's' 'min' 'h' 'd' 'mon' 'y']

@@ -11,3 +11,10 @@ ManagerGroup:
       tell 'Pre-Action 执行完毕'
     Post-Action: |-
       tell 'Post-Action 执行完毕'
+  SpawnPlayer:
+    AutoSpawn:
+      Enable: true
+      延迟: 50Tick
+    Options:
+      Type:
+      Info:

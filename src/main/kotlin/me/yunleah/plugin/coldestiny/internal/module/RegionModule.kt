@@ -36,11 +36,12 @@ object RegionModule {
                 }
                 "res" -> {
                     val res = SectionUtil.getList(it, "RegionGroup.Options.Info")
-                    ToolsUtil.debug("res -> $res")
-                    ToolsUtil.debug("loc -> ${ResidenceHookerImpl().getLocation(player)}")
                     if (ResidenceHookerImpl().getLocation(player) in res) { return@filter true }
                 }
                 "gd" -> {
+                    //TODO
+                }
+                "wg" -> {
                     //TODO
                 }
             }
