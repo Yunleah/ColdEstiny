@@ -1,9 +1,9 @@
 SelectGroup:
   GroupKey: 'ExampleSelect'
+  Weigh: 10
   Options:
-    # ['权限' '玩家']
-    Select: '玩家'
-    weigh: 10
+    # ['perm' 'player']
+    Select: 'player'
     Info:
       - 'Yunleah763'
       - 'LittleYunleah'

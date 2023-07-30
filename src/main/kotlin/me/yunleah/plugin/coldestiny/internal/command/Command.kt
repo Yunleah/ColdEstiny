@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.command
 
+import me.yunleah.plugin.coldestiny.internal.command.subcommand.Create
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Reload
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
@@ -20,7 +21,8 @@ object Command {
     val main = mainCommand { createHelper() }
     @CommandBody
     val help = subCommand { createHelper() }
-
+    @CommandBody
+    val create = Create.create
     @CommandBody
     val reload = Reload.reload
 }

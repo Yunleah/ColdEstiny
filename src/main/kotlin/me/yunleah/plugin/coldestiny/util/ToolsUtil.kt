@@ -4,6 +4,7 @@ import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager
 import taboolib.common.platform.function.console
 import taboolib.common5.Coerce
 import taboolib.module.lang.sendLang
+import java.io.File
 
 object ToolsUtil {
     fun debug(text: String) {

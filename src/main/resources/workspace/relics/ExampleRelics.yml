@@ -2,7 +2,7 @@ RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
     # ['原版' '限时死亡箱' '永久死亡箱' '赎回']
-    Mode: '限时死亡箱'
+    Type: '限时死亡箱'
     # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
     Info: '10min'
     并存数量: 3
@@ -13,4 +13,3 @@ RelicsGroup:
         tell inline '你的死亡箱还有 1min 消失哦~'
       10min: |-
         tell inline '你的死亡箱被服主偷走了哦~'
-    Condition: 'perm ce.relics.test'

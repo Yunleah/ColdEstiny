@@ -1,8 +1,9 @@
 RegionGroup:
   GroupKey: 'ExampleRegion'
+  Weigh: 100
   Options:
-    # [ '世界' 'Res领地' 'Wg领地']
-    Mode: '领地'
+    # [ 'world' 'res' 'wg']
+    Type: 'world'
     Info:
       - 'Test'
       - 'Example'

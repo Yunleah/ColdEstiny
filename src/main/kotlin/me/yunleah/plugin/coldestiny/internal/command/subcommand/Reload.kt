@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.command.subcommand
 
+import me.yunleah.plugin.coldestiny.internal.event.PluginReloadEvent
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.subCommand
@@ -15,6 +16,7 @@ object Reload {
 
     private fun reloadCommand(sender: CommandSender) {
         submit(async = true) {
+            PluginReloadEvent.call()
             sender.sendLang("Plugin-Reloaded")
             ToolsUtil.debug("Debug模式已开启.")
         }

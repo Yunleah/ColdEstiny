@@ -1,6 +1,10 @@
 package me.yunleah.plugin.coldestiny.internal.listner
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.settingDeathInfo
+import me.yunleah.plugin.coldestiny.internal.module.ManagerModule
+import me.yunleah.plugin.coldestiny.internal.module.RegionModule
+import me.yunleah.plugin.coldestiny.internal.module.SelectModule
+import me.yunleah.plugin.coldestiny.util.SectionUtil.getKey
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.timing
 import org.bukkit.GameRule
@@ -18,9 +22,18 @@ object PlayerDeathListener {
             debug("监听到玩家${event.entity.player!!.name}死亡 开始处理插件逻辑...")
         val startTime = timing()
 
-
         // 设置世界死亡不掉落
         event.entity.world.setGameRule(GameRule.KEEP_INVENTORY, true)
+        // 获取Select
+        val selectFile = SelectModule.checkSelect(event.entity.player!!)
+        debug("获取到的Select -> $selectFile")
+        // 获取Region
+        val regionFile = RegionModule.checkRegion(event.entity.player!!)
+        debug("获取到的Region -> $regionFile")
+        // 获取Manager
+        val managerFile = ManagerModule.checkManager(getKey(selectFile!!, "")!!, getKey(regionFile!!, "RegionGroup.GroupKey")!!)
+        debug("获取到的Manager -> $managerFile")
+        //获取Pre-Action
 
 
 

@@ -1,9 +1,13 @@
-ManagerOptions:
-  Key: 'ExampleManager'
+ManagerGroup:
+  GroupKey: 'ExampleManager'
+  Weigh: 100
   BindGroup:
     DropKey: 'ExampleDrop'
     RegionKey: 'ExampleRegion'
     RelicsKey: 'ExampleRelics'
     SelectKey: 'ExampleSelect'
-
-
+  runAction:
+    Pre-Action: |-
+      tell 'Pre-Action 执行完毕'
+    Post-Action: |-
+      tell 'Post-Action 执行完毕'

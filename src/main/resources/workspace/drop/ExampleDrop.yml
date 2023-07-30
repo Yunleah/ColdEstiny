@@ -3,12 +3,12 @@ DropGroup:
   Options:
     Drop:
       # ['百分比掉落' '随机掉落' '指定格掉落' '指定数掉落' '指定Material掉落' '指定LORE掉落' '指定NBT掉落' '全部掉落' '全不掉落']
-      Mode: '指定数掉落'
+      Type: '指定数掉落'
       Info:
         - 10
     Protected:
       Enable: true
       # ['物品格' '物品Material' '物品LORE' '物品NBT']
-      Mode: '物品Material'
+      Type: '物品Material'
       Info:
         - wood axe
