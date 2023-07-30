@@ -23,18 +23,14 @@ taboolib {
         contributors {
             name("Yunleah")
         }
-
+        dependencies {
+            name("Residence").with("bukkit").optional(true)
+        }
     }
 }
 
 repositories {
     mavenCentral()
-}
-
-configurations{
-    maybeCreate("packShadow")
-    get("compileOnly").extendsFrom(get("packShadow"))
-    get("packShadow").extendsFrom(get("taboo"))
 }
 
 dependencies {

@@ -20,6 +20,9 @@ object SelectModule {
     }
 
     fun checkSelect(player: Player): File? {
+        if (selectFileList.isEmpty()) {
+            return null
+        }
         val selectFile = selectFileList.filter {
             val selectType = SectionUtil.getKey(it, "SelectGroup.Options.Select")
             when (selectType) {

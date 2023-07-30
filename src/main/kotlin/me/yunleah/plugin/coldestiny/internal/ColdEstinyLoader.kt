@@ -1,6 +1,7 @@
 package me.yunleah.plugin.coldestiny.internal
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
+import me.yunleah.plugin.coldestiny.internal.manager.HookerManager
 import me.yunleah.plugin.coldestiny.internal.module.*
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.Bukkit
@@ -36,6 +37,7 @@ object ColdEstinyLoader {
         RegionModule.loadRegionFile()
         RelicsModule.loadRelicsFile()
         SelectModule.loadSelectFile()
+        HookerManager.residenceHooker
         console().sendLang("Plugin-Enabled")
         ToolsUtil.debug("Debug模式已开启.")
     }

@@ -1,5 +1,7 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
+import me.yunleah.plugin.coldestiny.internal.hook.residence.ResidenceHooker
+import me.yunleah.plugin.coldestiny.internal.hook.residence.impl.ResidenceHookerImpl
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.regionFileList
 import me.yunleah.plugin.coldestiny.util.FileUtil
@@ -22,6 +24,9 @@ object RegionModule {
         console().sendLang("Plugin-LoadFile", regionFileList.size, "Region", ToolsUtil.timing(startTime))
     }
     fun checkRegion(player: Player): File? {
+        if (regionFileList.isEmpty()) {
+            return null
+        }
         val regionFile = regionFileList.filter {
             val regionType = SectionUtil.getKey(it, "RegionGroup.Options.Type")
             when (regionType) {
@@ -30,10 +35,11 @@ object RegionModule {
                     if (player.world.name in world) { return@filter true }
                 }
                 "res" -> {
-
+                    val res = SectionUtil.getList(it, "RegionGroup.Options.Info")
+                    if (ResidenceHookerImpl().getLocation(player) in res) { return@filter true }
                 }
-                "wg" -> {
-
+                "gd" -> {
+                    //TODO
                 }
             }
             return@filter false
