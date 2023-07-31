@@ -37,7 +37,6 @@ object ColdEstinyLoader {
         HookerManager.ResidenceHooker
         HookerManager.GriefDefenderHooker
         HookerManager.WorldGuardHooker
-        HookerManager.PlaceholderAPIHooker
         console().sendLang("Plugin-Enabled")
         ToolsUtil.debug("Debug模式已开启.")
     }

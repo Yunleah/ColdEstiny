@@ -52,11 +52,14 @@ object RelicsModule {
 
     private fun createTimed() {
         // TODO
+        throw IllegalArgumentException("Invalid relics type")
     }
     private fun createPermanent() {
         // TODO
+        throw IllegalArgumentException("Invalid relics type")
     }
     private fun createRedeem() {
         // TODO
+        throw IllegalArgumentException("Invalid relics type")
     }
 }
