@@ -8,6 +8,7 @@ import taboolib.common.platform.function.console
 import taboolib.common5.Coerce
 import taboolib.module.lang.sendLang
 import taboolib.platform.util.killer
+import java.util.*
 
 object ToolsUtil {
     fun debug(text: String) {
@@ -72,7 +73,7 @@ object ToolsUtil {
 
     fun String.toMaterial(): Material {
         val str = this.replace(" ", "_")
-        return Material.getMaterial(str.uppercase()) ?: throw IllegalArgumentException("Invalid material name: $this")
+        return Material.getMaterial(str.uppercase(Locale.getDefault())) ?: throw IllegalArgumentException("Invalid material name: $this")
     }
 
     fun String.parsePercent(): Float {

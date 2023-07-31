@@ -2,8 +2,6 @@ package me.yunleah.plugin.coldestiny.internal.manager
 
 import me.yunleah.plugin.coldestiny.internal.hook.griefdefender.GriefDefenderHooker
 import me.yunleah.plugin.coldestiny.internal.hook.griefdefender.impl.GriefDefenderHookerImpl
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.PlaceholderAPIHooker
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.impl.PlaceholderAPIHookerImpl
 import me.yunleah.plugin.coldestiny.internal.hook.residence.ResidenceHooker
 import me.yunleah.plugin.coldestiny.internal.hook.residence.impl.ResidenceHookerImpl
 import me.yunleah.plugin.coldestiny.internal.hook.worldguard.impl.WorldGuardHookerImpl
@@ -49,18 +47,6 @@ object HookerManager {
             }
         } else {
             console().sendLang("Plugin-Hooker-False", "WorldGuard")
-            null
-        }
-    val PlaceholderAPIHooker: PlaceholderAPIHooker? =
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            console().sendLang("Plugin-Hooker-True", "PlaceholderAPI")
-            try {
-                PlaceholderAPIHookerImpl()
-            } catch (error: Throwable) {
-                null
-            }
-        } else {
-            console().sendLang("Plugin-Hooker-False", "PlaceholderAPI")
             null
         }
 }

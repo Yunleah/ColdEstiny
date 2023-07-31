@@ -2,10 +2,10 @@ DropGroup:
   GroupKey: 'ExampleDrop'
   Options:
     Drop:
-      # ['公式掉落: formula' '百分比掉落: percentage' '范围掉落: range' '指定格掉落: slot' '指定数掉落: amount' '指定Material掉落: material' '指定Lore掉落: lore' '指定Nbt掉落: nbt' '全掉落: all' '不掉落: none']
-      Type: '指定数掉落'
-      Info:
-        - 10
+      # ['返回值掉落: kether' '百分比掉落: percentage' '范围掉落: range' '指定格掉落: slot' '指定数掉落: amount' '指定Material掉落: material' '指定Lore掉落: lore' '指定Nbt掉落: nbt' '全掉落: all' '不掉落: none']
+      Type: 'kether'
+      Info: |-
+        5 + 1
     Protected:
       Enable: true
       # ['slot' 'material' 'lore' 'nbt']

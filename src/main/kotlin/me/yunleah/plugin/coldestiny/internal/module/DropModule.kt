@@ -1,8 +1,7 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
-import me.yunleah.plugin.coldestiny.asahi.util.calculate.FormulaParser.calculate
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.impl.PlaceholderAPIHookerImpl
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.dropFileList
+import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -10,6 +9,7 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.parsePercent
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.toMaterial
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
@@ -45,7 +45,7 @@ object DropModule {
             .map { (index, itemStack) -> index to itemStack }
     }
 
-    fun checkDropInv(file: File, player: Player) {
+    fun checkDropInv(file: File, player: Player, event: PlayerDeathEvent): ArrayList<Int> {
         val dropProtectedEnable = SectionUtil.getKey(file, "DropGroup.Options.Protected.Enable").cbool
         val protectedIndo = SectionUtil.getList(file, "DropGroup.Options.Protected.Info")
         val playerInventory = checkInv(player)
@@ -93,15 +93,10 @@ object DropModule {
         val setting = SectionUtil.getList(file, "DropGroup.Options.Drop.Info")
         val dropSlot: ArrayList<Int> = arrayListOf()
         when (dropType) {
-            "formula" -> {
+            "kether" -> {
                 // 公式
-                val dropSlots = setting.forEach { text ->
-                    if (PlaceholderAPIHookerImpl().hasPapi(text.toString())) {
-                        val formula = PlaceholderAPIHookerImpl().papi(player, setting.toString())
-                        val result = formula.calculate()
-                        newInventory.shuffled().take(result.cint).map { it.first }
-                    }
-                }
+                val result  = setting.toString().runKether(event, 0)
+                dropSlot += newInventory.shuffled().take(result).map { it.first }
             }
             "percentage" -> {
                 // 百分比 -> 50%
@@ -163,5 +158,6 @@ object DropModule {
         dropSlot.clear()
         dropSlot.addAll(result)
         debug("获取最终玩家掉落Slot列表 -> $dropSlot")
+        return dropSlot
     }
 }

@@ -1,13 +1,18 @@
 package me.yunleah.plugin.coldestiny.internal.listner
 
+import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.settingDeathInfo
 import me.yunleah.plugin.coldestiny.internal.module.*
 import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
+import me.yunleah.plugin.coldestiny.util.ItemUtil
+import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil.getKey
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.timing
+import org.bukkit.Bukkit
 import org.bukkit.GameRule
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.console
@@ -44,14 +49,17 @@ object PlayerDeathListener {
                 //获取Drop
                 val dropFile = DropModule.checkDrop(managerFile)
                 debug("获取到的Drop -> $dropFile")
-                val dropInv = DropModule.checkDropInv(dropFile, event.entity.player!!)
-
-
-
-
-
-
-
+                val dropInv = DropModule.checkDropInv(dropFile, event.entity.player!!, event)
+                val itemStackInv: ArrayList<ItemStack> = arrayListOf()
+                Bukkit.getScheduler().runTask(plugin, Runnable {
+                    debug("剔除玩家背包物品 -> Run")
+                    dropInv.forEach { slot ->
+                        val item = event.entity.player!!.inventory.getItem(slot)
+                        itemStackInv.add(item!!)
+                        event.entity.player!!.inventory.setItem(slot, null)
+                    }
+                    debug("剔除玩家背包物品 -> End")
+                })
                 //获取Post-Action
                 val postAction = getKey(managerFile, "ManagerGroup.runAction.Post-Action")
                 //运行Post-Action
@@ -62,11 +70,8 @@ object PlayerDeathListener {
                     //获取Relics
                     val relicsFile = RelicsModule.checkRelics(managerFile)
                     debug("获取到的Relics -> $relicsFile")
-
-
-
-
-
+                    val type = getKey(relicsFile, "RelicsGroup.Options.Type")
+                    RelicsModule.runRelics(relicsFile, type!!, event, itemStackInv)
                 }
             }
         } else {

@@ -1,13 +1,21 @@
 RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
-    Condition: |-
-      perm ce.relics.test
-    # ['原版' '限时死亡箱' '永久死亡箱' '赎回']
+    # ['原版: original' '限时死亡箱: timed' '永久死亡箱: permanent' '赎回: redeem']
     Type: '限时死亡箱'
     # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
     Info: '10min'
-    并存数量: 3
+    FancyDrop:
+      # 偏移量
+      offset:
+        # 横向偏移量(或随机最小偏移量-随机最大偏移量)
+        x: 0.1
+        # 纵向偏移量(或随机最小偏移量-随机最大偏移量)
+        y: 0.8
+      angle:
+        # 抛射类型(round/random)
+        type: round
+    Coexistence: 3
     Task:
       5min: |-
         tell inline '你的死亡箱还有 5min 消失哦~'

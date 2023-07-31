@@ -1,9 +1,13 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.relicsFileList
+import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
 import me.yunleah.plugin.coldestiny.util.FileUtil
+import me.yunleah.plugin.coldestiny.util.ItemUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
+import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
 import taboolib.module.lang.sendLang
@@ -23,5 +27,36 @@ object RelicsModule {
             return@filter key == relicsKey
         } as ArrayList<File>
         return relicsFile.first()
+    }
+
+    fun runRelics(file: File, type: String, event: PlayerDeathEvent, dropItem: List<ItemStack>) {
+        when (type) {
+            "original" -> {
+                val location = event.entity.location
+                val offsetX = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.x")
+                val offsetY = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.y")
+                val angleType = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.angle.type")
+                ItemUtil.dropItems(dropItem, location, offsetX, offsetY, angleType)
+            }
+            "timed" -> {
+                createTimed()
+            }
+            "permanent"-> {
+                createPermanent()
+            }
+            "redeem" -> {
+                createRedeem()
+            }
+        }
+    }
+
+    private fun createTimed() {
+        // TODO
+    }
+    private fun createPermanent() {
+        // TODO
+    }
+    private fun createRedeem() {
+        // TODO
     }
 }
