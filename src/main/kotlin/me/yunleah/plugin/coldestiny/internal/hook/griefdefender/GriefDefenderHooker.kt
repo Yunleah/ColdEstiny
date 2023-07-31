@@ -1,11 +1,11 @@
-package me.yunleah.plugin.coldestiny.internal.hook.residence
+package me.yunleah.plugin.coldestiny.internal.hook.griefdefender
 
 import org.bukkit.OfflinePlayer
 
 /**
- * Residence附属领地挂钩
+ * GriefDefender附属领地挂钩
  */
-abstract class ResidenceHooker {
+abstract class GriefDefenderHooker {
     /**
      * 获取玩家所在领地名
      *

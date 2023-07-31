@@ -1,11 +1,12 @@
-package me.yunleah.plugin.coldestiny.internal.hook.residence
+package me.yunleah.plugin.coldestiny.internal.hook.worldguard
 
 import org.bukkit.OfflinePlayer
 
+
 /**
- * Residence附属领地挂钩
+ * WorldGuard附属领地挂钩
  */
-abstract class ResidenceHooker {
+abstract class WorldGuardHooker {
     /**
      * 获取玩家所在领地名
      *

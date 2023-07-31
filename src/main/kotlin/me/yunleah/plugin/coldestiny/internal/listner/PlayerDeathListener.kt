@@ -3,19 +3,14 @@ package me.yunleah.plugin.coldestiny.internal.listner
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.settingDeathInfo
 import me.yunleah.plugin.coldestiny.internal.module.*
 import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
-import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
-import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.SectionUtil.getKey
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.timing
 import org.bukkit.GameRule
-import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.console
-import taboolib.module.kether.printKetherErrorMessage
 
 object PlayerDeathListener {
     @SubscribeEvent(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -41,7 +36,7 @@ object PlayerDeathListener {
             //获取Pre-Action
             val preAction = getKey(managerFile!!, "ManagerGroup.runAction.Pre-Action")
             //运行Pre-Action
-            val preResult = preAction?.runKether(event.entity)
+            val preResult = preAction?.runKether(event)
             // Pre-Action 运行结果
             debug("Pre-Action 运行结果 -> $preResult")
             if (preResult == true) {
@@ -49,7 +44,7 @@ object PlayerDeathListener {
                 //获取Drop
                 val dropFile = DropModule.checkDrop(managerFile)
                 debug("获取到的Drop -> $dropFile")
-
+                val dropInv = DropModule.checkDropInv(dropFile, event.entity.player!!)
 
 
 
@@ -60,7 +55,7 @@ object PlayerDeathListener {
                 //获取Post-Action
                 val postAction = getKey(managerFile, "ManagerGroup.runAction.Post-Action")
                 //运行Post-Action
-                val postResult = postAction?.runKether(event.entity)
+                val postResult = postAction?.runKether(event)
                 debug("Post-Action 运行结果 -> $postResult")
                 if (postResult == true) {
                     //处理玩家遗物

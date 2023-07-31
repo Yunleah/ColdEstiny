@@ -7,9 +7,9 @@ import org.bukkit.OfflinePlayer
 
 
 /**
- * Residence附属经济挂钩
+ * Residence附属领地挂钩
  *
- * @constructor 启用Residence附属经济挂钩
+ * @constructor 启用Residence附属领地挂钩
  */
 class ResidenceHookerImpl : ResidenceHooker() {
     override fun getLocation(player: OfflinePlayer): String? {
