@@ -9,11 +9,8 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
 import taboolib.common.platform.function.console
-import taboolib.common.platform.function.submit
-
 import taboolib.module.lang.sendLang
 import taboolib.module.metrics.Metrics
-import javax.swing.plaf.synth.Region
 
 object ColdEstinyLoader {
     @Awake(LifeCycle.LOAD)
@@ -37,7 +34,10 @@ object ColdEstinyLoader {
         RegionModule.loadRegionFile()
         RelicsModule.loadRelicsFile()
         SelectModule.loadSelectFile()
-        HookerManager.residenceHooker
+        HookerManager.ResidenceHooker
+        HookerManager.GriefDefenderHooker
+        HookerManager.WorldGuardHooker
+        HookerManager.PlaceholderAPIHooker
         console().sendLang("Plugin-Enabled")
         ToolsUtil.debug("Debug模式已开启.")
     }

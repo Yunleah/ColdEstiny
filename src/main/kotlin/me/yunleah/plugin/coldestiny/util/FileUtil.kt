@@ -2,7 +2,10 @@ package me.yunleah.plugin.coldestiny.util
 
 import taboolib.common.platform.function.getDataFolder
 import taboolib.platform.BukkitPlugin
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 
 object FileUtil {
     /**

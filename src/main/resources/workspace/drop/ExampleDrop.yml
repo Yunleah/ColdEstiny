@@ -2,13 +2,17 @@ DropGroup:
   GroupKey: 'ExampleDrop'
   Options:
     Drop:
-      # ['百分比掉落' '随机掉落' '指定格掉落' '指定数掉落' '指定Material掉落' '指定LORE掉落' '指定NBT掉落' '全部掉落' '全不掉落']
+      # ['公式掉落: formula' '百分比掉落: percentage' '范围掉落: range' '指定格掉落: slot' '指定数掉落: amount' '指定Material掉落: material' '指定Lore掉落: lore' '指定Nbt掉落: nbt' '全掉落: all' '不掉落: none']
       Type: '指定数掉落'
       Info:
         - 10
     Protected:
       Enable: true
-      # ['物品格' '物品Material' '物品LORE' '物品NBT']
-      Type: '物品Material'
+      # ['slot' 'material' 'lore' 'nbt']
       Info:
-        - wood axe
+        - material<->wooden axe
+        - slot<->0,1,2,3,4,5,6,7,8
+        - lore<->本物品死亡不掉落-LORE
+        - nbt<->本物品死亡不掉落-NBT
+
+

@@ -7,7 +7,6 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.info
 import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import java.io.File

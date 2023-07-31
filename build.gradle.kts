@@ -23,20 +23,30 @@ taboolib {
         contributors {
             name("Yunleah")
         }
+        desc("A Bukkit Death Engine for TabooLib")
         dependencies {
             name("Residence").with("bukkit").optional(true)
+            name("GriefDefender").with("bukkit").optional(true)
+            name("WorldGuard").with("bukkit").optional(true)
+            name("PlaceholderAPI").with("bukkit").optional(true)
         }
     }
 }
 
 repositories {
     mavenCentral()
+    maven("https://repo.glaremasters.me/repository/bloodshot")
+    maven("https://maven.enginehub.org/repo/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11902:11902-minimize:mapped")
     compileOnly("ink.ptms.core:v11902:11902-minimize:universal")
+    compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
+    compileOnly(dependencyNotation = "com.sk89q.worldguard:worldguard-bukkit:7.0.0")
+    compileOnly("me.clip:placeholderapi:2.10.9")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
