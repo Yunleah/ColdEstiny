@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.util
 
+import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -54,26 +55,23 @@ object ItemUtil {
             }
             dropItems.forEachIndexed { index, itemStack ->
                 val world = location.world
-                val item = world!!.dropItem(location, itemStack)
-                val vector = Vector(offsetX, offsetY, 0.0)
-                if (angleType == "random") {
-                    val angle = ThreadLocalRandom.current().nextDouble(0.0, 360.0)
-                    val angleCos = cos(Math.toRadians(angle))
-                    val angleSin = sin(Math.toRadians(angle))
-                    val x = angleCos * vector.x + angleSin * vector.z
-                    val z = -angleSin * vector.x + angleCos * vector.z
-                    vector.x = x
-                    vector.z = z
-                } else if (angleType == "round") {
-                    val angle = (360.0 / dropItems.size) * index
-                    val angleCos = cos(Math.toRadians(angle))
-                    val angleSin = sin(Math.toRadians(angle))
-                    val x = angleCos * vector.x + angleSin * vector.z
-                    val z = -angleSin * vector.x + angleCos * vector.z
-                    vector.x = x
-                    vector.z = z
-                }
-                item.velocity = vector
+                world!!.dropItem(location, itemStack).let { item ->
+                        val vector = Vector(offsetX, offsetY, 0.0)
+                        if (angleType == "random") {
+                            val angleCos = cos(Math.PI * 2 * ThreadLocalRandom.current().nextDouble())
+                            val angleSin = sin(Math.PI * 2 * ThreadLocalRandom.current().nextDouble())
+                            val x = angleCos * vector.x + angleSin * vector.z
+                            val z = -angleSin * vector.x + angleCos * vector.z
+                            vector.setX(x).z = z
+                        } else if (angleType == "round") {
+                            val angleCos = cos(Math.PI * 2 * index / dropItems.size)
+                            val angleSin = sin(Math.PI * 2 * index / dropItems.size)
+                            val x = angleCos * vector.x + angleSin * vector.z
+                            val z = -angleSin * vector.x + angleCos * vector.z
+                            vector.setX(x).z = z
+                        }
+                        item.velocity = vector
+                    }
             }
         } else {
             for (itemStack in dropItems) {
