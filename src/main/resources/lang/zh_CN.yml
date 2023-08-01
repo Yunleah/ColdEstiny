@@ -11,3 +11,18 @@ Plugin-LoadFile: '&8[&3Cold&bEstiny&8] &b加载 &8| &6成功载入&f{0}&6个&f{1
 Plugin-Hooker-True: '&8[&3Cold&bEstiny&8] &b挂钩 &8| &6插件挂钩&a成功 &7-> &f{0}.'
 Plugin-Hooker-False: '&8[&3Cold&bEstiny&8] &b挂钩 &8| &6插件挂钩&c失败 &7-> &f{0}.'
 Plugin-Debug: '&8[&3Cold&bEstiny&8] &e调试 &8| &f{0}'
+
+
+
+# 指令相关
+
+Command-Dev-HandIsAir: '&8[&3Cold&bEstiny&8] &b信息 &8| &6无法给空气添加{0}.'
+Command-Dev-AddAir: '&8[&3Cold&bEstiny&8] &b信息 &8| &6无法添加空{0}.'
+Command-Dev-AddTrue: '&8[&3Cold&bEstiny&8] &b信息 &8| &6{0}添加成功.'
+Command-Dev-AddFalse: '&8[&3Cold&bEstiny&8] &b信息 &8| &6{0}添加失败.'
+Command-Create-True: '&8[&3Cold&bEstiny&8] &b信息 &8| &6创建&a成功&6.'
+Command-Create-False: '&8[&3Cold&bEstiny&8] &b信息 &8| &6创建&c失败 &7-> &f{0}.'
+Command-Keep: '&8[&3Cold&bEstiny&8] &b信息 &8| &6手动开启成功.'
+Command-Version: '&8[&3Cold&bEstiny&8] &b信息 &8| &6ColdEstiny运行版本 -> &f{0}.'
+
+

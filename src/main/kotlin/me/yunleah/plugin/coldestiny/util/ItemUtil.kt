@@ -1,10 +1,12 @@
 package me.yunleah.plugin.coldestiny.util
 
+import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.util.Vector
 import taboolib.common5.cdouble
 import taboolib.module.nms.spawnEntity
@@ -55,7 +57,8 @@ object ItemUtil {
             }
             dropItems.forEachIndexed { index, itemStack ->
                 val world = location.world
-                world!!.dropItem(location, itemStack).let { item ->
+                ColdEstiny.bukkitScheduler.callSyncMethod(ColdEstiny.plugin) {
+                    world!!.dropItem(location, itemStack).let { item ->
                         val vector = Vector(offsetX, offsetY, 0.0)
                         if (angleType == "random") {
                             val angleCos = cos(Math.PI * 2 * ThreadLocalRandom.current().nextDouble())
@@ -72,6 +75,7 @@ object ItemUtil {
                         }
                         item.velocity = vector
                     }
+                }
             }
         } else {
             for (itemStack in dropItems) {

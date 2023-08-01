@@ -95,8 +95,10 @@ object DropModule {
         when (dropType) {
             "kether" -> {
                 // 公式
-                val result  = setting.toString().runKether(event, 0)
-                dropSlot += newInventory.shuffled().take(result).map { it.first }
+                dropSlot += setting.flatMap { script ->
+                    val result  = script.toString().runKether(event, 0)
+                    newInventory.shuffled().take(result).map { it.first }
+                }
             }
             "percentage" -> {
                 // 百分比 -> 50%

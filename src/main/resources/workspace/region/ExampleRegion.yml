@@ -2,6 +2,7 @@ RegionGroup:
   GroupKey: 'ExampleRegion'
   Weigh: 100
   Options:
+    Enable: false
     # [ 'world' 'res' 'gd']
     Type: 'world'
     Info:

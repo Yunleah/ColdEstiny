@@ -29,36 +29,18 @@ object ToolsUtil {
         val killer = event.entity.killer
         val killers = event.killer
         val damageEvent = event.entity.lastDamageCause
-
         //判断是否为玩家
         if (killer != null) { return killer.name }
         //判断是否为其他实体
         if (killers != null) { return killers.name }
         //判断意外死亡
-        when (damageEvent?.cause) {
-            EntityDamageEvent.DamageCause.CONTACT -> return "contact"
-            EntityDamageEvent.DamageCause.ENTITY_ATTACK -> return "entity_attack"
-            EntityDamageEvent.DamageCause.PROJECTILE -> return "projectile"
-            EntityDamageEvent.DamageCause.SUFFOCATION -> return "suffocation"
-            EntityDamageEvent.DamageCause.FALL -> return "fall"
-            EntityDamageEvent.DamageCause.FIRE -> return "fire"
-            EntityDamageEvent.DamageCause.FIRE_TICK -> return "fire_tick"
-            EntityDamageEvent.DamageCause.LAVA -> return "lava"
-            EntityDamageEvent.DamageCause.DROWNING -> return "drowning"
-            EntityDamageEvent.DamageCause.BLOCK_EXPLOSION -> return "block_explosion"
-            EntityDamageEvent.DamageCause.ENTITY_EXPLOSION -> return "entity_explosion"
-            EntityDamageEvent.DamageCause.VOID -> return "void"
-            EntityDamageEvent.DamageCause.LIGHTNING -> return "lightning"
-            EntityDamageEvent.DamageCause.SUICIDE -> return "suicide"
-            EntityDamageEvent.DamageCause.STARVATION -> return "starvation"
-            EntityDamageEvent.DamageCause.POISON -> return "poison"
-            EntityDamageEvent.DamageCause.MAGIC -> return "magic"
-            EntityDamageEvent.DamageCause.WITHER -> return "wither"
-            EntityDamageEvent.DamageCause.FALLING_BLOCK -> return "falling_block"
-            EntityDamageEvent.DamageCause.THORNS -> return "thorns"
-            EntityDamageEvent.DamageCause.CUSTOM -> return "custom"
-            else -> return "unknown"
-        }
+        //判断意外死亡
+        damageEvent?.cause?.let { cause ->
+            return when (cause) {
+                in EntityDamageEvent.DamageCause.values() -> cause.name.lowercase(Locale.getDefault())
+                else -> "unknown"
+            }
+        } ?: return "unknown"
     }
     fun type(event: PlayerDeathEvent): String? {
         val killer = event.entity.killer

@@ -7,6 +7,7 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import java.io.File
@@ -24,6 +25,8 @@ object SelectModule {
         }
         val selectFile = selectFileList.filter {
             val selectType = SectionUtil.getKey(it, "SelectGroup.Options.Select")
+            val selectEnable = SectionUtil.getKey(it,"SelectGroup.Options.Enable")
+            if (selectEnable.cbool) { return it }
             when (selectType) {
                 "player" -> {
                     val playerList = SectionUtil.getList(it, "SelectGroup.Options.Info")

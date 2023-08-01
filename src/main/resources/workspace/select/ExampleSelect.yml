@@ -3,6 +3,7 @@ SelectGroup:
   Weigh: 10
   Options:
     # ['perm' 'player']
+    Enable: false
     Select: 'player'
     Info:
       - 'Yunleah763'
