@@ -1,10 +1,8 @@
 RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
-    # ['原版: original' '限时死亡箱: timed' '永久死亡箱: permanent' '赎回: redeem']
+    # ['原版: original' '死亡箱: permanent' '赎回: redeem']
     Type: '限时死亡箱'
-    # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
-    Info: '10min'
     FancyDrop:
       # 偏移量
       offset:
@@ -15,6 +13,8 @@ RelicsGroup:
       angle:
         # 抛射类型(round/random)
         type: round
+    # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
+    Info: '10min'
     Coexistence: 3
     Task:
       5min: |-

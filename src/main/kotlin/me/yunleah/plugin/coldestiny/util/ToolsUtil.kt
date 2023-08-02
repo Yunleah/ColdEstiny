@@ -54,8 +54,7 @@ object ToolsUtil {
     }
 
     fun String.toMaterial(): Material {
-        val str = this.replace(" ", "_")
-        return Material.getMaterial(str.uppercase(Locale.getDefault())) ?: throw IllegalArgumentException("Invalid material name: $this")
+        return Material.getMaterial(this) ?: throw IllegalArgumentException("Invalid material name: $this")
     }
 
     fun String.parsePercent(): Float {

@@ -28,7 +28,7 @@ object RegionModule {
         val regionFile = regionFileList.filter {
             val regionType = SectionUtil.getKey(it, "RegionGroup.Options.Type")
             val regionEnable = SectionUtil.getKey(it, "RegionGroup.Options.Enable")
-            if (regionEnable.cbool) { return it }
+            if (!regionEnable.cbool) { return it }
             when (regionType) {
                 "world" -> {
                     val world = SectionUtil.getList(it, "RegionGroup.Options.Info")

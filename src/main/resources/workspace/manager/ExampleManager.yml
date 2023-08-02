@@ -12,9 +12,10 @@ ManagerGroup:
     Post-Action: |-
       tell 'Post-Action 执行完毕'
   SpawnPlayer:
+    Enable: true
+    # ['death:死亡点' 'coo：坐标' 'loc: 重生点']
+    Type: death
+    Info: world 1 1 1
     AutoSpawn:
       Enable: true
-      延迟: 50Tick
-    Options:
-      Type:
-      Info:
+      Timed: 5

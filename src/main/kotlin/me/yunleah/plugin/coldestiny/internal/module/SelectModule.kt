@@ -26,7 +26,7 @@ object SelectModule {
         val selectFile = selectFileList.filter {
             val selectType = SectionUtil.getKey(it, "SelectGroup.Options.Select")
             val selectEnable = SectionUtil.getKey(it,"SelectGroup.Options.Enable")
-            if (selectEnable.cbool) { return it }
+            if (!selectEnable.cbool) { return it }
             when (selectType) {
                 "player" -> {
                     val playerList = SectionUtil.getList(it, "SelectGroup.Options.Info")

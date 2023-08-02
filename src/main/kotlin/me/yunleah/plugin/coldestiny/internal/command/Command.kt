@@ -15,6 +15,7 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.pluginVersion
 import taboolib.expansion.createHelper
 import taboolib.module.kether.printKetherErrorMessage
@@ -47,10 +48,14 @@ object Command {
     val keep = subCommand {
         execute<CommandSender> { sender, _, _ ->
             val worldList = Bukkit.getWorlds()
-            worldList.forEach {world ->
-                world.setGameRule(GameRule.KEEP_INVENTORY, true)
+            try {
+                worldList.forEach {world ->
+                    world.setGameRule(GameRule.KEEP_INVENTORY, true)
+                }
+                sender.sendLang("Command-Keep")
+            } catch (error: NoClassDefFoundError) {
+                console().sendMessage("§8[§3Cold§bEstiny§8] §e调试 §8| GameRule -> ${error.cause}")
             }
-            sender.sendLang("Command-Keep")
         }
     }
     @CommandBody
@@ -69,6 +74,7 @@ object Command {
                         if (sender is Player) {
                             set("player", sender)
                             set("hand", sender.equipment?.itemInMainHand)
+                            set("test", "cold")
                         }
                     }.thenAccept {
                         sender.sendMessage(" §3§l‹ ›§r §bResult: §f$it")

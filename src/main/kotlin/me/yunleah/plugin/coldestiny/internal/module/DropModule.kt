@@ -1,7 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.dropFileList
-import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -9,11 +8,11 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.parsePercent
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.toMaterial
 import org.bukkit.entity.Player
-import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common5.cbool
+import taboolib.common5.cfloat
 import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.ItemTagData
@@ -30,8 +29,8 @@ object DropModule {
         console().sendLang("Plugin-LoadFile", dropFileList.size, "Drop", ToolsUtil.timing(startTime))
     }
 
-    fun checkDrop(managerFile: File): File {
-        val dropKey = SectionUtil.getKey(managerFile, "ManagerGroup.BindGroup.DropKey")
+    fun checkDrop(managerFile: File): File? {
+        val dropKey = SectionUtil.getKey(managerFile, "ManagerGroup.BindGroup.DropKey") ?: return null
         val dropFile = dropFileList.filter {
             val key = SectionUtil.getKey(it, "DropGroup.GroupKey")
             return@filter key == dropKey
@@ -45,9 +44,12 @@ object DropModule {
             .map { (index, itemStack) -> index to itemStack }
     }
 
-    fun checkDropInv(file: File, player: Player, event: PlayerDeathEvent): ArrayList<Int> {
-        val dropProtectedEnable = SectionUtil.getKey(file, "DropGroup.Options.Protected.Enable").cbool
-        val protectedIndo = SectionUtil.getList(file, "DropGroup.Options.Protected.Info")
+    fun checkDropInv(file: File?, player: Player): ArrayList<Int> {
+        if (file == null) return arrayListOf()
+        val dropEnable = SectionUtil.getKey(file, "DropGroup.Options.Item.Enable").cbool
+        if (!dropEnable) return arrayListOf()
+        val dropProtectedEnable = SectionUtil.getKey(file, "DropGroup.Options.Item.Protected.Enable").cbool
+        val protectedIndo = SectionUtil.getList(file, "DropGroup.Options.Item.Protected.Info")
         val playerInventory = checkInv(player)
         val protectedSlot: ArrayList<Int> = arrayListOf()
 
@@ -89,17 +91,10 @@ object DropModule {
         debug("获得处理后的玩家Slot列表 -> $newInventory")
 
         // 处理玩家Drop列表
-        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Drop.Type")
-        val setting = SectionUtil.getList(file, "DropGroup.Options.Drop.Info")
+        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Item.Type")
+        val setting = SectionUtil.getList(file, "DropGroup.Options.Item.Info")
         val dropSlot: ArrayList<Int> = arrayListOf()
         when (dropType) {
-            "kether" -> {
-                // 公式
-                dropSlot += setting.flatMap { script ->
-                    val result  = script.toString().runKether(event, 0)
-                    newInventory.shuffled().take(result).map { it.first }
-                }
-            }
             "percentage" -> {
                 // 百分比 -> 50%
                 dropSlot += setting.map { it.toString().parsePercent() }
@@ -161,5 +156,41 @@ object DropModule {
         dropSlot.addAll(result)
         debug("获取最终玩家掉落Slot列表 -> $dropSlot")
         return dropSlot
+    }
+
+    fun checkDropExp(file: File?, player: Player): Int {
+        if (file == null) return 0
+        val dropEnable = SectionUtil.getKey(file, "DropGroup.Options.Exp.Enable").cbool
+        if (dropEnable) return 0
+        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Exp.Type")
+        val setting = SectionUtil.getKey(file, "DropGroup.Options.Exp.Info").toString()
+        val didnt = SectionUtil.getKey(file, "DropGroup.Options.Exp.Didnt").cint
+        var result = 0
+        val level = player.level
+        if (didnt >= level) return 0
+        when (dropType) {
+            "percentage" -> {
+                val info = setting.removeSuffix("%").cfloat
+                val per = info / 100.0
+                result = (level * per).cint
+            }
+            "range" -> {
+                val (setLeft, setRight) = setting.split("..").map { it.cint }
+                result = ThreadLocalRandom.current().nextInt(setLeft, setRight + 1)
+            }
+            "amount" -> {
+                result = setting.cint
+            }
+            "none" -> {
+                result = 0
+            }
+            "all" -> {
+                result = level
+            }
+            else -> throw IllegalArgumentException("Invalid drop type")
+        }
+        if (result > level) result = level
+        debug("获取最终玩家掉落Exp -> $result")
+        return  result
     }
 }

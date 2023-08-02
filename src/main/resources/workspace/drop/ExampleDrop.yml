@@ -1,18 +1,24 @@
 DropGroup:
   GroupKey: 'ExampleDrop'
   Options:
-    Drop:
-      # ['返回值掉落: kether' '百分比掉落: percentage' '范围掉落: range' '指定格掉落: slot' '指定数掉落: amount' '指定Material掉落: material' '指定Lore掉落: lore' '指定Nbt掉落: nbt' '全掉落: all' '不掉落: none']
-      Type: 'kether'
-      Info: |-
-        5 + 1
-    Protected:
+    Item:
       Enable: true
-      # ['slot' 'material' 'lore' 'nbt']
+      # ['百分比掉落: percentage' '范围掉落: range' '指定格掉落: slot' '指定数掉落: amount' '指定Material掉落: material' '指定Lore掉落: lore' '指定Nbt掉落: nbt' '全掉落: all' '不掉落: none']
+      Type: 'percentage'
       Info:
-        - material<->wooden axe
-        - slot<->0,1,2,3,4,5,6,7,8
-        - lore<->本物品死亡不掉落-LORE
-        - nbt<->本物品死亡不掉落-NBT
+        - 50%
+      Protected:
+        Enable: false
+        # ['slot' 'material' 'lore' 'nbt']
+        Info:
+          - slot<->0,1,2,3,4,5,6,7,8
+          - lore<->本物品死亡不掉落-LORE
+          - nbt<->本物品死亡不掉落-NBT
+    Exp:
+      Enable: true
+      # ['百分比掉落: percentage' '范围掉落: range' '指定掉落: amount' '不掉落: none' '全掉落: all']
+      Type: 'range'
+      Info: 50%
+      Didnt: 5
 
 
