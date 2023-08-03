@@ -1,6 +1,6 @@
 # ColdEstiny
 
-* Bukkit Death Engine || Powered By TabooLib || 一款全能&全自定义&全版本的死亡系统
+* Bukkit Death Engine || Powered By TabooLib 
 
 The GradleWrapper in included in this project.
 
