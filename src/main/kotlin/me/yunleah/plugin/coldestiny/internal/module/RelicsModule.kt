@@ -7,11 +7,13 @@ import me.yunleah.plugin.coldestiny.util.ItemUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common5.cint
+import taboolib.common5.clong
 import taboolib.module.lang.sendLang
 import java.io.File
 
@@ -31,37 +33,11 @@ object RelicsModule {
         return relicsFile.first()
     }
 
-    fun runRelics(file: File, type: String, event: PlayerDeathEvent, dropItem: List<ItemStack>) {
-        when (type) {
-            "original" -> {
-                val location = event.entity.location
-                val offsetX = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.x")
-                val offsetY = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.y")
-                val angleType = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.angle.type")
-                ItemUtil.dropItems(dropItem, location, offsetX, offsetY, angleType)
-            }
-            "timed" -> {
-                createTimed()
-            }
-            "permanent"-> {
-                createPermanent()
-            }
-            "redeem" -> {
-                createRedeem()
-            }
-        }
-    }
-
-    private fun createTimed() {
-        // TODO
-        throw IllegalArgumentException("Invalid relics type")
-    }
-    private fun createPermanent() {
-        // TODO
-        throw IllegalArgumentException("Invalid relics type")
-    }
-    private fun createRedeem() {
-        // TODO
-        throw IllegalArgumentException("Invalid relics type")
+    fun runRelics(file: File, player: Player, dropItem: List<ItemStack>) {
+        val location = player.location
+        val offsetX = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.x")
+        val offsetY = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.offset.y")
+        val angleType = SectionUtil.getKey(file, "RelicsGroup.Options.FancyDrop.angle.type")
+        ItemUtil.dropItems(dropItem, location, offsetX, offsetY, angleType)
     }
 }

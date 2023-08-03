@@ -4,16 +4,18 @@ import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common5.cbool
 import java.io.File
 
 object SpawnModule {
-    fun checkSpawnLocation(file: File, event: PlayerDeathEvent): Location? {
+    fun checkSpawnLocation(file: File, event: PlayerDeathEvent? = null, player: Player? = null): Location? {
         val spawnEnable = SectionUtil.getKey(file, "ManagerGroup.SpawnPlayer.Enable").cbool
         if (!spawnEnable) return null
         val spawnType = SectionUtil.getKey(file, "ManagerGroup.SpawnPlayer.Type")
         val spawnInfo = SectionUtil.getKey(file, "ManagerGroup.SpawnPlayer.Info")
+        if (event == null) return player!!.location
         when (spawnType) {
             "death" -> {
                 return event.entity.location
@@ -32,7 +34,7 @@ object SpawnModule {
                     return bedSpawnLocation
                 }
                 ToolsUtil.debug("当前世界不存在重生点 -> ${event.entity.world.name}")
-                return null
+                return event.entity.location
             }
             else -> throw IllegalArgumentException("Invalid spawn type")
         }

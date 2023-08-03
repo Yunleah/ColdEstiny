@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.util.Vector
 import taboolib.common5.cdouble
+import taboolib.common5.clong
 import taboolib.module.nms.spawnEntity
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.cos
@@ -30,7 +31,7 @@ object ItemUtil {
         location: Location,
         offsetXString: String? = null,
         offsetYString: String? = null,
-        angleType: String? = null
+        angleType: String? = null,
     ) {
         if (offsetXString != null && offsetYString != null && angleType != null) {
             val offsetX: Double = if (offsetXString.contains("-")) {

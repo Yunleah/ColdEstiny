@@ -1,8 +1,6 @@
 RelicsGroup:
   GroupKey: 'ExampleRelics'
   Options:
-    # ['原版: original' '死亡箱: permanent' '赎回: redeem']
-    Type: '限时死亡箱'
     FancyDrop:
       # 偏移量
       offset:
@@ -13,13 +11,4 @@ RelicsGroup:
       angle:
         # 抛射类型(round/random)
         type: round
-    # [单位: 's' 'min' 'h' 'd' 'mon' 'y']
-    Info: '10min'
-    Coexistence: 3
-    Task:
-      5min: |-
-        tell inline '你的死亡箱还有 5min 消失哦~'
-      9min: |-
-        tell inline '你的死亡箱还有 1min 消失哦~'
-      10min: |-
-        tell inline '你的死亡箱被服主偷走了哦~'
+

@@ -3,6 +3,7 @@ package me.yunleah.plugin.coldestiny.internal.command
 import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Create
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Dev
+import me.yunleah.plugin.coldestiny.internal.command.subcommand.Drop
 import me.yunleah.plugin.coldestiny.internal.command.subcommand.Reload
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
@@ -85,6 +86,8 @@ object Command {
             }
         }
     }
+    @CommandBody
+    val runDrop = Drop.runDrop
     @CommandBody
     val dev = Dev.dev
     @CommandBody

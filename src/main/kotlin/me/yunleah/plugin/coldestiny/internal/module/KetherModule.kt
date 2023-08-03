@@ -15,13 +15,7 @@ import taboolib.module.nms.getI18nName
 import taboolib.platform.util.killer
 
 object KetherModule {
-    fun String.runKether(event: PlayerDeathEvent, dropInv: ArrayList<ItemStack>? = null, location: Location? = null): Boolean {
-        val loc: Location
-        if (location == null) {
-            loc = event.entity.location
-        } else {
-            loc = location
-        }
+    fun String.runKether(event: PlayerDeathEvent? = null, player: Player? = null,dropInv: ArrayList<ItemStack>? = null, location: Location? = null): Boolean {
         var result = false
         try {
             val script = if (this.startsWith("def")) {
@@ -29,16 +23,19 @@ object KetherModule {
             } else {
                 "def main = { $this }"
             }
+            val entity = event?.entity ?: player
             script.toKetherScript().runActions {
-                this.sender = adaptCommandSender(event.entity)
-                set("player", event.entity)
-                set("hand", event.entity.inventory.itemInMainHand)
-                set("killer", event.entity.killer)
-                set("killers", event.killer)
-                set("cause", ToolsUtil.causeDeath(event))
-                set("type", ToolsUtil.type(event))
-                set("level", event.entity.player!!.level)
-                set("location", event.entity.location)
+                this.sender = adaptCommandSender(entity!!)
+                set("player", entity)
+                set("hand", entity.inventory.itemInMainHand)
+                if (event != null) {
+                    set("killer", event.entity.killer)
+                    set("killers", event.entity.killer)
+                    set("cause", ToolsUtil.causeDeath(event))
+                    set("type", ToolsUtil.type(event))
+                }
+                set("level", entity.player!!.level)
+                set("location", entity.location)
                 if (dropInv != null) {
                     set("dropInv", dropInv)
                     val evalInv: List<String> = dropInv.map { drop ->
@@ -48,7 +45,7 @@ object KetherModule {
                     }
                     set("evalInv", evalInv)
                 }
-                set("loc", loc)
+                set("loc", location)
             }.thenAccept {
                 if (it != false) result = true
             }
