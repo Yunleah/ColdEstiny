@@ -76,11 +76,11 @@ object Create {
     private fun createConfig(type: String, name: String, group: String): String? {
         var len: Int
         val buf = ByteArray(1024)
-        val outFile = File(bukkitPlugin.dataFolder, "workspace" + File.separator + type + File.separator + name + ".yml")
-        val inputStream = ColdEstiny.plugin.getResource("workspace${File.separator}${type}${File.separator}Example${group}.yml")
+        val outFile = File(bukkitPlugin.dataFolder, "workspace/${type}/${name}.yml")
+        val inputStream = ColdEstiny.plugin.getResource("workspace/${type}/Example${group}.yml")
         if (outFile.exists()) { return "File already exists" }
         else {
-            FileUtil.getFileOrCreate("workspace" + File.separator + type + File.separator + name + ".yml")
+            FileUtil.getFileOrCreate("workspace/${type}/${name}.yml")
         }
         try {
             val fileOutputStream = FileOutputStream(outFile)

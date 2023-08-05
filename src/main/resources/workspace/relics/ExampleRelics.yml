@@ -11,4 +11,15 @@ RelicsGroup:
       angle:
         # 抛射类型(round/random)
         type: round
+    FancyRelics:
+      # [drop, redeem, chest]
+      Type: chest
+      Custom: my_custom_chest
+      Owner:
+        Visible: true
+        Available: true
+        BreakChest: false
+      # [ s,min,hou,day,mon,year ]
+      Timed: 10min
+      Coexistence: 3
 

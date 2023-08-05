@@ -3,7 +3,7 @@ RegionGroup:
   Weigh: 100
   Options:
     Enable: false
-    # [ 'world' 'res' 'gd']
+    # [ 'world' 'res' 'gd' 'wg']
     Type: 'world'
     Info:
       - 'Test'

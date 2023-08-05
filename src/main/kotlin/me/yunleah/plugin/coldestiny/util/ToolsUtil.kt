@@ -6,6 +6,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
 import taboolib.common5.Coerce
+import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import taboolib.platform.util.killer
 import java.util.*
@@ -23,6 +24,22 @@ object ToolsUtil {
 
     fun timing(start: Long): Double {
         return Coerce.format((System.nanoTime() - start).div(1000000.0))
+    }
+
+    fun String.toTime(): Int {
+        if (this == "") return  0
+        val units = listOf("s", "min", "hou", "day", "mon", "year")
+        val unit = units.firstOrNull { this.endsWith(it) } ?: throw IllegalArgumentException("Invalid time unit")
+        val value = this.dropLast(unit.length).cint
+        return when (unit) {
+            "s" -> value * 20
+            "min" -> value * 20 * 60
+            "hou" -> value * 20 * 60 * 60
+            "day" -> value * 20 * 60 * 60 * 24
+            "mon" -> value * 20 * 60 * 60 * 24 * 30
+            "year" -> value * 20 * 60 * 60 * 24 * 365
+            else -> throw IllegalArgumentException("Invalid time unit")
+        }
     }
 
     fun causeDeath(event: PlayerDeathEvent): String {

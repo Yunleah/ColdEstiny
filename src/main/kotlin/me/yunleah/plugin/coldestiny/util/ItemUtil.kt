@@ -1,19 +1,12 @@
 package me.yunleah.plugin.coldestiny.util
 
 import me.yunleah.plugin.coldestiny.ColdEstiny
-import me.yunleah.plugin.coldestiny.util.ToolsUtil.debug
 import org.bukkit.Location
-import org.bukkit.entity.Entity
-import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.util.Vector
-import taboolib.common5.cdouble
-import taboolib.common5.clong
-import taboolib.module.nms.spawnEntity
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 object ItemUtil {
     /**
@@ -84,4 +77,5 @@ object ItemUtil {
             }
         }
     }
+
 }

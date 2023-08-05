@@ -33,8 +33,11 @@ object SelectModule {
                     if (player.name in playerList) { return@filter true }
                 }
                 "perm" -> {
-                    val perm = SectionUtil.getKey(it, "SelectGroup.Options.Info")
-                    if (player.hasPermission(perm!!)) { return@filter true }
+                    val perm = SectionUtil.getList(it, "SelectGroup.Options.Info")
+                    perm.forEach { p ->
+                        if (!player.hasPermission(p.toString())) return@filter false
+                    }
+                    return@filter true
                 }
             }
             return@filter false

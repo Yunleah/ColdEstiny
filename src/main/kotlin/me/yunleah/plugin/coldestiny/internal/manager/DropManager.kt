@@ -27,8 +27,8 @@ object DropManager {
         // 获取Manager
         if (selectFile != null && regionFile != null) {
             val managerFile = ManagerModule.checkManager(
-                getKey(selectFile, "SelectGroup.GroupKey")!!,
-                getKey(regionFile, "RegionGroup.GroupKey")!!
+                getKey(selectFile, "SelectGroup.GroupKey")?: "null",
+                getKey(regionFile, "RegionGroup.GroupKey")?: "null"
             )
             debug("获取到的Manager -> $managerFile")
 

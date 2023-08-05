@@ -1,6 +1,7 @@
 package me.yunleah.plugin.coldestiny.internal
 
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
+import me.yunleah.plugin.coldestiny.internal.manager.ChestManager
 import me.yunleah.plugin.coldestiny.internal.manager.HookerManager
 import me.yunleah.plugin.coldestiny.internal.module.*
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -37,11 +38,16 @@ object ColdEstinyLoader {
         HookerManager.ResidenceHooker
         HookerManager.GriefDefenderHooker
         HookerManager.WorldGuardHooker
+        HookerManager.ProtocolLibHooker
         console().sendLang("Plugin-Enabled")
         ToolsUtil.debug("Debug模式已开启.")
     }
     @Awake(LifeCycle.DISABLE)
     fun disable() {
+        ChestManager.chestTaskList.forEach {
+            it.cancel()
+        }
+        console().sendLang("Plugin-RelicsUnTask")
         console().sendLang("Plugin-Disable")
     }
 }

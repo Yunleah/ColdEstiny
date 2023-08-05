@@ -29,6 +29,7 @@ taboolib {
             name("GriefDefender").with("bukkit").optional(true)
             name("WorldGuard").with("bukkit").optional(true)
             name("PlaceholderAPI").with("bukkit").optional(true)
+            name("ProtocolLib").with("bukkit").optional(true)
         }
     }
 }
@@ -38,6 +39,7 @@ repositories {
     maven("https://repo.glaremasters.me/repository/bloodshot")
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 dependencies {
@@ -46,7 +48,7 @@ dependencies {
     compileOnly("ink.ptms.core:v11902:11902-minimize:universal")
     compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
     compileOnly(dependencyNotation = "com.sk89q.worldguard:worldguard-bukkit:7.0.0")
-    compileOnly("me.clip:placeholderapi:2.10.9")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
