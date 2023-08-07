@@ -9,6 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.comphenix.protocol.wrappers.BlockPosition
 import com.comphenix.protocol.wrappers.WrappedBlockData
+import me.yunleah.plugin.coldestiny.ColdEstiny.bukkitScheduler
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
 import me.yunleah.plugin.coldestiny.internal.module.RelicsModule
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -22,18 +23,20 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.service.PlatformExecutor
+import taboolib.common.util.sync
+import taboolib.common5.cint
 import taboolib.common5.clong
 import taboolib.platform.util.sendLang
 import java.lang.reflect.InvocationTargetException
 
 object ChestManager {
-    val chestTaskList: ArrayList<PlatformExecutor.PlatformTask> = arrayListOf()
-    fun createChest(dropItem: List<ItemStack>, location: Location, player: Player, ownerVisible: Boolean, ownerAvailable: Boolean, timed: Int, custom: String, key: String, breakBlock: Boolean) {
+    fun createChest(dropItem: List<ItemStack>, location: Location, player: Player, ownerVisible: Boolean, ownerAvailable: Boolean, timed: Int, custom: String, key: String, title: String) {
         // 发包
         val world = location.world
         val block = world!!.getBlockAt(location)
         block.type = Material.CHEST
         val chest = block.state as Chest
+        chest.customName = title
         if (custom != "") {
             val dataContainer = chest.persistentDataContainer
             val customKey = NamespacedKey(plugin, custom)
@@ -76,11 +79,11 @@ object ChestManager {
 
         // 是否时间限制
         if (timed != 0) {
-            chestTaskList.add(submit(async = true, delay = timed.clong) {
+            submit(delay = timed.clong) {
                 removeChest(location, player, ownerVisible)
                 val old = RelicsModule.relicsMap[key]
                 RelicsModule.relicsMap[key] = old!! - 1
-            })
+            }
         }
 
        // 箱子空了就删掉 不然留着过年吗
@@ -95,28 +98,18 @@ object ChestManager {
                 }
             }
         }, plugin)
-
-
-        // 玩家是否允许自己打掉箱子 op绕过
-        if (!breakBlock) {
-            Bukkit.getPluginManager().registerEvents(object : Listener {
-                @EventHandler
-                fun onBlockBreak(event: BlockBreakEvent) {
-                    if (event.block == block) {
-                        event.isCancelled = true
-                        // 没错 这就是后门 op可以无脑拆箱子知道不 嘻嘻
-                        if (!player.isOp) {
-                            event.player.sendLang("BreakBlockError")
-                        }
-                    }
-                }
-            }, plugin)
-        }
     }
     private fun removeChest(location: Location, player: Player, ownerVisible: Boolean) {
         val world = location.world
         val block = world!!.getBlockAt(location)
-        block.type = Material.AIR
+        val chest = block.state as Chest
+        val inventory = chest.blockInventory
+        inventory.clear()
+        bukkitScheduler.runTask(plugin, Runnable {
+            synchronized(block) {
+                block.type = Material.AIR
+            }
+        })
         val protocolManager = ProtocolLibHookerImpl().getManager()
         val packet = protocolManager.createPacket(PacketType.Play.Server.BLOCK_CHANGE)
         packet.blockPositionModifier.write(0, BlockPosition(location.toVector()))

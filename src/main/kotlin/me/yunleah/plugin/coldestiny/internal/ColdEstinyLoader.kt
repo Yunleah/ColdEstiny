@@ -44,9 +44,6 @@ object ColdEstinyLoader {
     }
     @Awake(LifeCycle.DISABLE)
     fun disable() {
-        ChestManager.chestTaskList.forEach {
-            it.cancel()
-        }
         console().sendLang("Plugin-RelicsUnTask")
         console().sendLang("Plugin-Disable")
     }

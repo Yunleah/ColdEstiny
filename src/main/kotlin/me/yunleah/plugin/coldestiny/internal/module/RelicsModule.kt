@@ -2,6 +2,8 @@ package me.yunleah.plugin.coldestiny.internal.module
 
 import me.yunleah.plugin.coldestiny.internal.manager.ChestManager
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.relicsFileList
+import me.yunleah.plugin.coldestiny.internal.manager.RedeemManager
+import me.yunleah.plugin.coldestiny.internal.manager.RedeemManager.redeemMap
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.ItemUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
@@ -49,25 +51,40 @@ object RelicsModule {
             "chest" -> {
                 val key = SectionUtil.getKey(file, "RelicsGroup.GroupKey")
                 val timed = SectionUtil.getKey(file, "RelicsGroup.Options.FancyRelics.Timed")?: ""
-                val coexistence = SectionUtil.getKey(file, "RelicsGroup.FancyRelics.Coexistence").cint
+                val coexistence = SectionUtil.getKey(file, "RelicsGroup.Options.FancyRelics.Coexistence").cint
+                val title = SectionUtil.getKey(file, "RelicsGroup.Options.FancyRelics.Title")
                 val k = key + "<->" + player.uniqueId.toString()
+                debug("Map ->$relicsMap")
+                debug("Coexistence -> $coexistence")
                 if (relicsMap.keys.contains(k)) {
+                    debug("Map包含了$k")
                     val oldOrder = relicsMap[k].cint
+                    debug("获取到的Map中的次数 -> $oldOrder")
                     if (oldOrder < coexistence) {
+                        debug("Map的次数小于限定的数")
                         relicsMap[k] = oldOrder +1
                     } else {
+                        debug("Map次数大于等于限定数，执行原版掉落")
                         ItemUtil.dropItems(dropItem, player.location)
                         return
                     }
                 } else {
+                    debug("Map 不包含 $k")
                     relicsMap[k] = 1
                 }
+                debug(relicsMap[k].toString())
                 val ownerVisible = SectionUtil.getKey(file, "RelicsGroup.FancyRelics.Owner.Visible").cbool
                 val ownerAvailable = SectionUtil.getKey(file,"RelicsGroup.FancyRelics.Owner.Available").cbool
                 val custom = SectionUtil.getKey(file,"RelicsGroup.FancyRelics.Custom")?: ""
-                val breakBlock = SectionUtil.getKey(file,"RelicsGroup.FancyRelics.Owner.BreakBlock").cbool
-                ChestManager.createChest(dropItem, player.location, player, ownerVisible, ownerAvailable, timed.toTime(), custom, k, breakBlock)
+                ChestManager.createChest(dropItem, player.location, player, ownerVisible, ownerAvailable, timed.toTime(), custom, k, title?: " ")
             }
+            "redeem" -> {
+                val key = SectionUtil.getKey(file, "RelicsGroup.GroupKey")
+                val timed = SectionUtil.getKey(file, "RelicsGroup.Options.FancyRelics.Timed")?: ""
+                val coexistence = SectionUtil.getKey(file, "RelicsGroup.Options.FancyRelics.Coexistence").cint
+                RedeemManager.addRedeem(player, dropItem, coexistence, timed.toTime())
+            }
+            else -> throw IllegalArgumentException("Invalid relics type")
         }
     }
 }

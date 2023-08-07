@@ -56,27 +56,31 @@ object DropModule {
         // 处理保护格逻辑
         if (dropProtectedEnable) {
             protectedIndo.forEach { info ->
-                val (option, setting) = info.toString().split("<->")
-                when (option) {
-                    "slot" -> {
-                        protectedSlot += setting.split(",").map(String::cint)
-                            .filter { playerInventory.map { i -> i.first }.contains(it) }
-                    }
-                    "material" -> {
-                        val material = setting.toMaterial()
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.type == material }
-                            .map { (index, _) -> index }
-                    }
-                    "lore" -> {
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.hasLore(setting) }
-                            .map { (index, _) -> index }
-                    }
-                    "nbt" -> {
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.getItemTag()["ColdEstiny"] == ItemTagData(setting) }
-                            .map { (index, _) -> index }
+                val str = info.toString().split("<", ">")
+                val filteredStr = str.filter { it.isNotEmpty() }
+                val (right, setting,lift) = filteredStr
+                if (right == lift) {
+                    when (right) {
+                        "slot" -> {
+                            protectedSlot += setting.split(",").map(String::cint)
+                                .filter { playerInventory.map { i -> i.first }.contains(it) }
+                        }
+                        "material" -> {
+                            val material = setting.toMaterial()
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.type == material }
+                                .map { (index, _) -> index }
+                        }
+                        "lore" -> {
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.hasLore(setting) }
+                                .map { (index, _) -> index }
+                        }
+                        "nbt" -> {
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.getItemTag()["ColdEstiny"] == ItemTagData(setting) }
+                                .map { (index, _) -> index }
+                        }
                     }
                 }
             }
@@ -159,32 +163,42 @@ object DropModule {
     }
 
     fun checkDropExp(file: File?, player: Player): Int {
+        debug("-----Exp-----")
         if (file == null) return 0
         val dropEnable = SectionUtil.getKey(file, "DropGroup.Options.Exp.Enable").cbool
-        if (dropEnable) return 0
+        if (!dropEnable) return 0
         val dropType = SectionUtil.getKey(file, "DropGroup.Options.Exp.Type")
+        debug("获取到的type -> $dropType")
         val setting = SectionUtil.getKey(file, "DropGroup.Options.Exp.Info").toString()
+        debug("获取到的Info -> $setting")
         val didnt = SectionUtil.getKey(file, "DropGroup.Options.Exp.Didnt").cint
-        var result = 0
+        debug("获取到的扣除下限 -> $didnt")
+        var result: Int
         val level = player.level
-        if (didnt >= level) return 0
+        debug("玩家等级")
+        if (didnt > level) return 0
         when (dropType) {
             "percentage" -> {
+                debug("百分比")
                 val info = setting.removeSuffix("%").cfloat
                 val per = info / 100.0
                 result = (level * per).cint
             }
             "range" -> {
+                debug("范围")
                 val (setLeft, setRight) = setting.split("..").map { it.cint }
                 result = ThreadLocalRandom.current().nextInt(setLeft, setRight + 1)
             }
             "amount" -> {
+                debug("指定")
                 result = setting.cint
             }
             "none" -> {
+                debug("不掉")
                 result = 0
             }
             "all" -> {
+                debug("全掉")
                 result = level
             }
             else -> throw IllegalArgumentException("Invalid drop type")

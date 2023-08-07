@@ -11,6 +11,7 @@ taboolib {
     install("module-configuration")
     install("module-kether")
     install("module-lang")
+    install("module-ui")
     install("module-metrics")
     install("platform-bukkit")
     install("expansion-command-helper")

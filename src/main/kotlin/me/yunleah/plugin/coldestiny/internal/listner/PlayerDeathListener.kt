@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.listner
 
+import me.yunleah.plugin.coldestiny.ColdEstiny
 import me.yunleah.plugin.coldestiny.ColdEstiny.bukkitScheduler
 import me.yunleah.plugin.coldestiny.ColdEstiny.plugin
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.settingDeathInfo
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.console
+import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
 import taboolib.common5.clong
 
@@ -36,14 +38,19 @@ object PlayerDeathListener {
             event.keepLevel = true
             console().sendMessage("§8[§3Cold§bEstiny§8] §e调试 §8| keepLevel -> ${event.keepLevel}")
         }
+        val startTime = timing()
         bukkitScheduler.callSyncMethod(plugin) {
-            val startTime = timing()
             DropManager.runDrop(event, null, true)
-
-            if (settingDeathInfo)
-                console().sendMessage("&8[&3Cold&bEstiny&8] &e调试 &8| &f插件逻辑执行完毕! 耗时 &6${timing(startTime)} &fms".replace("&", "§"))
-            else
-                debug("插件逻辑执行完毕! 耗时 &6${timing(startTime)} &fms")
         }
+
+        val compass = ColdEstiny.setting.getBoolean("Options.DeathCompass")
+        if (compass) {
+            event.entity.player!!.compassTarget = event.entity.location
+        }
+
+        if (settingDeathInfo)
+            console().sendMessage("&8[&3Cold&bEstiny&8] &e调试 &8| &f插件逻辑执行完毕! 耗时 &6${timing(startTime)} &fms".replace("&", "§"))
+        else
+            debug("插件逻辑执行完毕! 耗时 &6${timing(startTime)} &fms")
     }
 }

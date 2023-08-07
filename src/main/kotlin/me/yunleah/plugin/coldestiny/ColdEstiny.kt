@@ -5,6 +5,7 @@ import taboolib.common.platform.Plugin
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigFile
 import taboolib.platform.BukkitPlugin
+import java.util.concurrent.Executors
 
 object ColdEstiny : Plugin() {
 
@@ -14,4 +15,6 @@ object ColdEstiny : Plugin() {
 
     @Config("setting.yml", true)
     lateinit var setting: ConfigFile
+
+    val executor by lazy { Executors.newCachedThreadPool() }
 }

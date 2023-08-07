@@ -33,4 +33,5 @@ Command-Version: '&8[&3Cold&bEstiny&8] &b信息 &8| &6ColdEstiny运行版本 -> 
 
 ClickChestError: '该死亡箱不属于 {0}'
 BreakBlockError: '你没有权限破坏这个死亡箱'
+RedeemError: '你还没有可赎回的物品'
 

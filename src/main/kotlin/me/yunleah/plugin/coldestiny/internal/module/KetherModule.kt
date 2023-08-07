@@ -1,5 +1,6 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
+import me.yunleah.plugin.coldestiny.internal.module.KetherModule.runKether
 import me.yunleah.plugin.coldestiny.util.KetherUtil.runActions
 import me.yunleah.plugin.coldestiny.util.KetherUtil.toKetherScript
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -46,6 +47,28 @@ object KetherModule {
                     set("evalInv", evalInv)
                 }
                 set("loc", location)
+            }.thenAccept {
+                if (it != false) result = true
+            }
+        } catch (e: Exception) {
+            e.printKetherErrorMessage()
+        }
+        return result
+    }
+
+    fun String.runRedeem(player: Player, v: Int): Boolean {
+        var result = false
+        try {
+            val script = if (this.startsWith("def")) {
+                this
+            } else {
+                "def main = { $this }"
+            }
+            script.toKetherScript().runActions {
+                this.sender = adaptCommandSender(player)
+                set("player", player)
+                set("hand", player.inventory.itemInMainHand)
+                set("price", v)
             }.thenAccept {
                 if (it != false) result = true
             }

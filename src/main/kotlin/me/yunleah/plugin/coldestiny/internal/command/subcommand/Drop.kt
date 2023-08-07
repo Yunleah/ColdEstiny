@@ -10,12 +10,12 @@ object Drop {
     val runDrop = subCommand {
         execute<Player> { sender, _, _ ->
             ColdEstiny.bukkitScheduler.callSyncMethod(ColdEstiny.plugin) {
-                runDrop(sender)
+                drop(sender)
             }
         }
     }
 
-    private fun runDrop(player: Player) {
-        DropManager.runDrop(null, player, false)
+    private fun drop(sender: Player) {
+        DropManager.runDrop(null, sender, false)
     }
 }
