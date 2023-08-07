@@ -2,7 +2,8 @@ RegionGroup:
   GroupKey: 'ExampleRegion'
   Weigh: 100
   Options:
-    # [ 'world' 'res' 'gd']
+    Enable: false
+    # [ 'world' 'res' 'gd' 'wg']
     Type: 'world'
     Info:
       - 'Test'

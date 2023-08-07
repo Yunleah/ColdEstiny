@@ -1,7 +1,5 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
-import me.yunleah.plugin.coldestiny.asahi.util.calculate.FormulaParser.calculate
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.impl.PlaceholderAPIHookerImpl
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.dropFileList
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
@@ -14,6 +12,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common5.cbool
+import taboolib.common5.cfloat
 import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.ItemTagData
@@ -30,8 +29,8 @@ object DropModule {
         console().sendLang("Plugin-LoadFile", dropFileList.size, "Drop", ToolsUtil.timing(startTime))
     }
 
-    fun checkDrop(managerFile: File): File {
-        val dropKey = SectionUtil.getKey(managerFile, "ManagerGroup.BindGroup.DropKey")
+    fun checkDrop(managerFile: File): File? {
+        val dropKey = SectionUtil.getKey(managerFile, "ManagerGroup.BindGroup.DropKey") ?: return null
         val dropFile = dropFileList.filter {
             val key = SectionUtil.getKey(it, "DropGroup.GroupKey")
             return@filter key == dropKey
@@ -45,36 +44,43 @@ object DropModule {
             .map { (index, itemStack) -> index to itemStack }
     }
 
-    fun checkDropInv(file: File, player: Player) {
-        val dropProtectedEnable = SectionUtil.getKey(file, "DropGroup.Options.Protected.Enable").cbool
-        val protectedIndo = SectionUtil.getList(file, "DropGroup.Options.Protected.Info")
+    fun checkDropInv(file: File?, player: Player): ArrayList<Int> {
+        if (file == null) return arrayListOf()
+        val dropEnable = SectionUtil.getKey(file, "DropGroup.Options.Item.Enable").cbool
+        if (!dropEnable) return arrayListOf()
+        val dropProtectedEnable = SectionUtil.getKey(file, "DropGroup.Options.Item.Protected.Enable").cbool
+        val protectedIndo = SectionUtil.getList(file, "DropGroup.Options.Item.Protected.Info")
         val playerInventory = checkInv(player)
         val protectedSlot: ArrayList<Int> = arrayListOf()
 
         // 处理保护格逻辑
         if (dropProtectedEnable) {
             protectedIndo.forEach { info ->
-                val (option, setting) = info.toString().split("<->")
-                when (option) {
-                    "slot" -> {
-                        protectedSlot += setting.split(",").map(String::cint)
-                            .filter { playerInventory.map { i -> i.first }.contains(it) }
-                    }
-                    "material" -> {
-                        val material = setting.toMaterial()
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.type == material }
-                            .map { (index, _) -> index }
-                    }
-                    "lore" -> {
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.hasLore(setting) }
-                            .map { (index, _) -> index }
-                    }
-                    "nbt" -> {
-                        protectedSlot += playerInventory
-                            .filter { (_, item) -> item.getItemTag()["ColdEstiny"] == ItemTagData(setting) }
-                            .map { (index, _) -> index }
+                val str = info.toString().split("<", ">")
+                val filteredStr = str.filter { it.isNotEmpty() }
+                val (right, setting,lift) = filteredStr
+                if (right == lift) {
+                    when (right) {
+                        "slot" -> {
+                            protectedSlot += setting.split(",").map(String::cint)
+                                .filter { playerInventory.map { i -> i.first }.contains(it) }
+                        }
+                        "material" -> {
+                            val material = setting.toMaterial()
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.type == material }
+                                .map { (index, _) -> index }
+                        }
+                        "lore" -> {
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.hasLore(setting) }
+                                .map { (index, _) -> index }
+                        }
+                        "nbt" -> {
+                            protectedSlot += playerInventory
+                                .filter { (_, item) -> item.getItemTag()["ColdEstiny"] == ItemTagData(setting) }
+                                .map { (index, _) -> index }
+                        }
                     }
                 }
             }
@@ -89,20 +95,10 @@ object DropModule {
         debug("获得处理后的玩家Slot列表 -> $newInventory")
 
         // 处理玩家Drop列表
-        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Drop.Type")
-        val setting = SectionUtil.getList(file, "DropGroup.Options.Drop.Info")
+        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Item.Type")
+        val setting = SectionUtil.getList(file, "DropGroup.Options.Item.Info")
         val dropSlot: ArrayList<Int> = arrayListOf()
         when (dropType) {
-            "formula" -> {
-                // 公式
-                val dropSlots = setting.forEach { text ->
-                    if (PlaceholderAPIHookerImpl().hasPapi(text.toString())) {
-                        val formula = PlaceholderAPIHookerImpl().papi(player, setting.toString())
-                        val result = formula.calculate()
-                        newInventory.shuffled().take(result.cint).map { it.first }
-                    }
-                }
-            }
             "percentage" -> {
                 // 百分比 -> 50%
                 dropSlot += setting.map { it.toString().parsePercent() }
@@ -163,5 +159,52 @@ object DropModule {
         dropSlot.clear()
         dropSlot.addAll(result)
         debug("获取最终玩家掉落Slot列表 -> $dropSlot")
+        return dropSlot
+    }
+
+    fun checkDropExp(file: File?, player: Player): Int {
+        debug("-----Exp-----")
+        if (file == null) return 0
+        val dropEnable = SectionUtil.getKey(file, "DropGroup.Options.Exp.Enable").cbool
+        if (!dropEnable) return 0
+        val dropType = SectionUtil.getKey(file, "DropGroup.Options.Exp.Type")
+        debug("获取到的type -> $dropType")
+        val setting = SectionUtil.getKey(file, "DropGroup.Options.Exp.Info").toString()
+        debug("获取到的Info -> $setting")
+        val didnt = SectionUtil.getKey(file, "DropGroup.Options.Exp.Didnt").cint
+        debug("获取到的扣除下限 -> $didnt")
+        var result: Int
+        val level = player.level
+        debug("玩家等级")
+        if (didnt > level) return 0
+        when (dropType) {
+            "percentage" -> {
+                debug("百分比")
+                val info = setting.removeSuffix("%").cfloat
+                val per = info / 100.0
+                result = (level * per).cint
+            }
+            "range" -> {
+                debug("范围")
+                val (setLeft, setRight) = setting.split("..").map { it.cint }
+                result = ThreadLocalRandom.current().nextInt(setLeft, setRight + 1)
+            }
+            "amount" -> {
+                debug("指定")
+                result = setting.cint
+            }
+            "none" -> {
+                debug("不掉")
+                result = 0
+            }
+            "all" -> {
+                debug("全掉")
+                result = level
+            }
+            else -> throw IllegalArgumentException("Invalid drop type")
+        }
+        if (result > level) result = level
+        debug("获取最终玩家掉落Exp -> $result")
+        return  result
     }
 }

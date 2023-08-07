@@ -10,6 +10,7 @@ import me.yunleah.plugin.coldestiny.util.ToolsUtil
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import java.io.File
@@ -26,6 +27,8 @@ object RegionModule {
         }
         val regionFile = regionFileList.filter {
             val regionType = SectionUtil.getKey(it, "RegionGroup.Options.Type")
+            val regionEnable = SectionUtil.getKey(it, "RegionGroup.Options.Enable")
+            if (!regionEnable.cbool) { return it }
             when (regionType) {
                 "world" -> {
                     val world = SectionUtil.getList(it, "RegionGroup.Options.Info")

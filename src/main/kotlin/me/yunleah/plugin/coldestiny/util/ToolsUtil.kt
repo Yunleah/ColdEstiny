@@ -6,8 +6,10 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import taboolib.common.platform.function.console
 import taboolib.common5.Coerce
+import taboolib.common5.cint
 import taboolib.module.lang.sendLang
 import taboolib.platform.util.killer
+import java.util.*
 
 object ToolsUtil {
     fun debug(text: String) {
@@ -24,40 +26,38 @@ object ToolsUtil {
         return Coerce.format((System.nanoTime() - start).div(1000000.0))
     }
 
+    fun String.toTime(): Int {
+        if (this == "") return  0
+        val units = listOf("s", "min", "hou", "day", "mon", "year")
+        val unit = units.firstOrNull { this.endsWith(it) } ?: throw IllegalArgumentException("Invalid time unit")
+        val value = this.dropLast(unit.length).cint
+        return when (unit) {
+            "s" -> value * 20
+            "min" -> value * 20 * 60
+            "hou" -> value * 20 * 60 * 60
+            "day" -> value * 20 * 60 * 60 * 24
+            "mon" -> value * 20 * 60 * 60 * 24 * 30
+            "year" -> value * 20 * 60 * 60 * 24 * 365
+            else -> throw IllegalArgumentException("Invalid time unit")
+        }
+    }
+
     fun causeDeath(event: PlayerDeathEvent): String {
         val killer = event.entity.killer
         val killers = event.killer
         val damageEvent = event.entity.lastDamageCause
-
         //判断是否为玩家
         if (killer != null) { return killer.name }
         //判断是否为其他实体
         if (killers != null) { return killers.name }
         //判断意外死亡
-        when (damageEvent?.cause) {
-            EntityDamageEvent.DamageCause.CONTACT -> return "contact"
-            EntityDamageEvent.DamageCause.ENTITY_ATTACK -> return "entity_attack"
-            EntityDamageEvent.DamageCause.PROJECTILE -> return "projectile"
-            EntityDamageEvent.DamageCause.SUFFOCATION -> return "suffocation"
-            EntityDamageEvent.DamageCause.FALL -> return "fall"
-            EntityDamageEvent.DamageCause.FIRE -> return "fire"
-            EntityDamageEvent.DamageCause.FIRE_TICK -> return "fire_tick"
-            EntityDamageEvent.DamageCause.LAVA -> return "lava"
-            EntityDamageEvent.DamageCause.DROWNING -> return "drowning"
-            EntityDamageEvent.DamageCause.BLOCK_EXPLOSION -> return "block_explosion"
-            EntityDamageEvent.DamageCause.ENTITY_EXPLOSION -> return "entity_explosion"
-            EntityDamageEvent.DamageCause.VOID -> return "void"
-            EntityDamageEvent.DamageCause.LIGHTNING -> return "lightning"
-            EntityDamageEvent.DamageCause.SUICIDE -> return "suicide"
-            EntityDamageEvent.DamageCause.STARVATION -> return "starvation"
-            EntityDamageEvent.DamageCause.POISON -> return "poison"
-            EntityDamageEvent.DamageCause.MAGIC -> return "magic"
-            EntityDamageEvent.DamageCause.WITHER -> return "wither"
-            EntityDamageEvent.DamageCause.FALLING_BLOCK -> return "falling_block"
-            EntityDamageEvent.DamageCause.THORNS -> return "thorns"
-            EntityDamageEvent.DamageCause.CUSTOM -> return "custom"
-            else -> return "unknown"
-        }
+        //判断意外死亡
+        damageEvent?.cause?.let { cause ->
+            return when (cause) {
+                in EntityDamageEvent.DamageCause.values() -> cause.name.lowercase(Locale.getDefault())
+                else -> "unknown"
+            }
+        } ?: return "unknown"
     }
     fun type(event: PlayerDeathEvent): String? {
         val killer = event.entity.killer
@@ -71,8 +71,7 @@ object ToolsUtil {
     }
 
     fun String.toMaterial(): Material {
-        val str = this.replace(" ", "_")
-        return Material.getMaterial(str.uppercase()) ?: throw IllegalArgumentException("Invalid material name: $this")
+        return Material.getMaterial(this) ?: throw IllegalArgumentException("Invalid material name: $this")
     }
 
     fun String.parsePercent(): Float {

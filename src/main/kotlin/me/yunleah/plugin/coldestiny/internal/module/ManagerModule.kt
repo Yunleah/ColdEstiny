@@ -1,6 +1,8 @@
 package me.yunleah.plugin.coldestiny.internal.module
 
 import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.managerFileList
+import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.regionFileList
+import me.yunleah.plugin.coldestiny.internal.manager.ConfigManager.selectFileList
 import me.yunleah.plugin.coldestiny.util.FileUtil
 import me.yunleah.plugin.coldestiny.util.SectionUtil
 import me.yunleah.plugin.coldestiny.util.ToolsUtil
@@ -19,9 +21,22 @@ object ManagerModule {
     }
 
     fun checkManager(selectKey: String, regionKey: String): File? {
-        val managerFile = managerFileList.filter {
+        val managerFile: ArrayList<File> = arrayListOf()
+        val nullSelect = managerFileList.filter {
+            return@filter "null" == SectionUtil.getKey(it, "ManagerGroup.BindGroup.SelectKey")
+        }
+        val nullRegion = managerFileList.filter {
+            return@filter "null" == SectionUtil.getKey(it, "ManagerGroup.BindGroup.RegionKey")
+        }
+        managerFile += nullSelect.filter { file ->
+            return@filter SectionUtil.getKey(file, "ManagerGroup.BindGroup.RegionKey") != "null"
+        }
+        managerFile += nullRegion.filter { file ->
+            return@filter SectionUtil.getKey(file, "ManagerGroup.BindGroup.SelectKey") != "null"
+        }
+        managerFile += managerFileList.filter {
             return@filter selectKey == SectionUtil.getKey(it, "ManagerGroup.BindGroup.SelectKey") && regionKey == SectionUtil.getKey(it, "ManagerGroup.BindGroup.RegionKey")
-        } as ArrayList<File>
+        }
 
         return when (managerFile.size) {
             0 -> {

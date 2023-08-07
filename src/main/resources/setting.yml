@@ -2,3 +2,11 @@
 Options:
   Debug: false
   DeathInfo: true
+  DeathCompass: true
+  RedeemTitle: 'ColdEstiny Title'
+  Redeem:
+    Lore: '点击前往{玩家}在{时间}死亡的赎回页面'
+    runAction: |-
+      tell 1111
+    Price:
+      NBTKey: RedeemPrice

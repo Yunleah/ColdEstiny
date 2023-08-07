@@ -2,8 +2,8 @@ package me.yunleah.plugin.coldestiny.internal.manager
 
 import me.yunleah.plugin.coldestiny.internal.hook.griefdefender.GriefDefenderHooker
 import me.yunleah.plugin.coldestiny.internal.hook.griefdefender.impl.GriefDefenderHookerImpl
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.PlaceholderAPIHooker
-import me.yunleah.plugin.coldestiny.internal.hook.placeholderapi.impl.PlaceholderAPIHookerImpl
+import me.yunleah.plugin.coldestiny.internal.hook.protocollib.ProtocolLibHooker
+import me.yunleah.plugin.coldestiny.internal.hook.protocollib.impl.ProtocolLibHookerImpl
 import me.yunleah.plugin.coldestiny.internal.hook.residence.ResidenceHooker
 import me.yunleah.plugin.coldestiny.internal.hook.residence.impl.ResidenceHookerImpl
 import me.yunleah.plugin.coldestiny.internal.hook.worldguard.impl.WorldGuardHookerImpl
@@ -15,6 +15,18 @@ import taboolib.module.lang.sendLang
  * 插件兼容管理器, 用于尝试与各个软依赖插件取得联系
  */
 object HookerManager {
+    val ProtocolLibHooker: ProtocolLibHooker? =
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+            console().sendLang("Plugin-Hooker-True", "ProtocolLib")
+            try {
+                ProtocolLibHookerImpl()
+            } catch (error: Throwable) {
+                null
+            }
+        } else {
+            console().sendLang("Plugin-Hooker-False", "ProtocolLib")
+            null
+        }
     val ResidenceHooker: ResidenceHooker? =
         if (Bukkit.getPluginManager().isPluginEnabled("Residence")) {
             console().sendLang("Plugin-Hooker-True", "Residence")
@@ -49,18 +61,6 @@ object HookerManager {
             }
         } else {
             console().sendLang("Plugin-Hooker-False", "WorldGuard")
-            null
-        }
-    val PlaceholderAPIHooker: PlaceholderAPIHooker? =
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            console().sendLang("Plugin-Hooker-True", "PlaceholderAPI")
-            try {
-                PlaceholderAPIHookerImpl()
-            } catch (error: Throwable) {
-                null
-            }
-        } else {
-            console().sendLang("Plugin-Hooker-False", "PlaceholderAPI")
             null
         }
 }
